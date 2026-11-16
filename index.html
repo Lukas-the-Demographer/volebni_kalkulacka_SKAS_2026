@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volební kalkulačka</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1, h2 { color: #2c3e50; text-align: center; }
+        .question-card, .result-card { border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+        .options { display: flex; gap: 10px; margin-top: 10px; }
+        button { flex: 1; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-ano { background-color: #d4edda; color: #155724; }
+        .btn-ano:hover, .btn-ano.selected { background-color: #28a745; color: white; }
+        .btn-ne { background-color: #f8d7da; color: #721c24; }
+        .btn-ne:hover, .btn-ne.selected { background-color: #dc3545; color: white; }
+        .btn-nevim { background-color: #e2e3e5; color: #383d41; }
+        .btn-nevim:hover, .btn-nevim.selected { background-color: #6c757d; color: white; }
+        .submit-btn { background-color: #007bff; color: white; width: 100%; padding: 15px; font-size: 1.1em; margin-top: 20px; }
+        .submit-btn:hover { background-color: #0056b3; }
+        .match-bar { background: #e9ecef; border-radius: 5px; overflow: hidden; margin: 10px 0; height: 20px; }
+        .match-fill { background: #28a745; height: 100%; }
+        .detail-btn { background: #17a2b8; color: white; padding: 5px 10px; font-size: 0.9em; width: auto; }
+        .detail-item { padding: 8px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+        .agree { color: #28a745; font-weight: bold; }
+        .disagree { color: #dc3545; font-weight: bold; }
+        .back-btn { background-color: #6c757d; color: white; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- Obsah se generuje dynamicky pomocí JavaScriptu -->
+</div>
+
+<script>
+    // --- DATABÁZE ---
+    // 1 = Ano, -1 = Ne, 0 = Nevím / Je mi to jedno
+    
+    const otazky = [
+        { id: 'q1', text: 'Mělo by se na náměstí postavit nové parkoviště?' },
+        { id: 'q2', text: 'Jste pro zrušení místního poplatku ze psů?' },
+        { id: 'q3', text: 'Mělo by město více dotovat lokální kulturu?' }
+    ];
+
+    const kandidati = [
+        { jmeno: 'Jan Novák', odpovedi: { q1: 1, q2: -1, q3: 1 } },
+        { jmeno: 'Petra Svobodová', odpovedi: { q1: -1, q2: 1, q3: 1 } },
+        { jmeno: 'Karel Dvořák', odpovedi: { q1: 1, q2: 1, q3: -1 } }
+    ];
+
+    // --- LOGIKA APLIKACE ---
+    
+    let odpovediUzivatele = {};
+    const appDiv = document.getElementById('app');
+
+    function odpovez(otazkaId, hodnota) {
+        odpovediUzivatele[otazkaId] = hodnota;
+        vykresliOtazky(); // Překreslíme, aby se zvýraznilo tlačítko
+    }
+
+    // 1. Zobrazení dotazníku
+    function vykresliOtazky() {
+        let html = `<h1>Volební kalkulačka</h1>`;
+        
+        otazky.forEach(otazka => {
+            const zvoleno = odpovediUzivatele[otazka.id];
+            html += `
+                <div class="question-card">
+                    <p><strong>${otazka.text}</strong></p>
+                    <div class="options">
+                        <button class="btn-ano ${zvoleno === 1 ? 'selected' : ''}" onclick="odpovez('${otazka.id}', 1)">Ano</button>
+                        <button class="btn-ne ${zvoleno === -1 ? 'selected' : ''}" onclick="odpovez('${otazka.id}', -1)">Ne</button>
+                        <button class="btn-nevim ${zvoleno === 0 ? 'selected' : ''}" onclick="odpovez('${otazka.id}', 0)">Nevím</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `<button class="submit-btn" onclick="vyhodnot()">Zobrazit výsledky</button>`;
+        appDiv.innerHTML = html;
+    }
+
+    // 2. Výpočet shody
+    function vyhodnot() {
+        let vysledky = kandidati.map(kandidat => {
+            let pocetShod = 0;
+            let pocetOdpovezenych = 0;
+            let detaily = [];
+
+            otazky.forEach(otazka => {
+                const odpUziv = odpovediUzivatele[otazka.id];
+                const odpKand = kandidat.odpovedi[otazka.id];
+
+                // Počítáme jen otázky, na které uživatel odpověděl Ano nebo Ne
+                if (odpUziv === 1 || odpUziv === -1) {
+                    pocetOdpovezenych++;
+                    const jeShoda = (odpUziv === odpKand);
+                    if (jeShoda) pocetShod++;
+
+                    detaily.push({
+                        otazkaText: otazka.text,
+                        uzivatelText: odpUziv === 1 ? 'Ano' : 'Ne',
+                        kandidatText: odpKand === 1 ? 'Ano' : (odpKand === -1 ? 'Ne' : 'Nevyjádřil se'),
+                        jeShoda: jeShoda
+                    });
+                }
+            });
+
+            // Výpočet procenta (pokud neodpověděl na nic, shoda je 0)
+            const procento = pocetOdpovezenych > 0 ? Math.round((pocetShod / pocetOdpovezenych) * 100) : 0;
+            
+            return { jmeno: kandidat.jmeno, procento, detaily };
+        });
+
+        // Seřadit kandidáty od největší shody po nejmenší
+        vysledky.sort((a, b) => b.procento - a.procento);
+        vykresliVysledky(vysledky);
+    }
+
+    // 3. Zobrazení tabulky výsledků
+    function vykresliVysledky(vysledky) {
+        let html = `<h1>Vaše shoda s kandidáty</h1>`;
+        
+        vysledky.forEach((vysledek, index) => {
+            // Uložíme data kandidáta do globálního window objektu pro snadné předání do detailu
+            window[`kandData_${index}`] = vysledek; 
+            
+            html += `
+                <div class="result-card">
+                    <h3>${vysledek.jmeno} - ${vysledek.procento} %</h3>
+                    <div class="match-bar">
+                        <div class="match-fill" style="width: ${vysledek.procento}%"></div>
+                    </div>
+                    <button class="detail-btn" onclick="zobrazDetail(${index})">Porovnat odpovědi</button>
+                </div>
+            `;
+        });
+        
+        html += `<button class="submit-btn" style="background:#6c757d;" onclick="vykresliOtazky()">Zpět na otázky</button>`;
+        appDiv.innerHTML = html;
+    }
+
+    // 4. Detailní rozpad odpovědí
+    function zobrazDetail(index) {
+        const vysledek = window[`kandData_${index}`];
+        let html = `
+            <button class="back-btn" onclick="vyhodnot()">← Zpět na výsledky</button>
+            <h2>Detail shody: ${vysledek.jmeno}</h2>
+        `;
+
+        if (vysledek.detaily.length === 0) {
+            html += `<p>Neodpověděli jste na žádné otázky (nebo jste u všech zvolili "Nevím").</p>`;
+        } else {
+            vysledek.detaily.forEach(d => {
+                html += `
+                    <div class="detail-item">
+                        <div style="width: 70%;">${d.otazkaText}</div>
+                        <div style="width: 30%; text-align: right;" class="${d.jeShoda ? 'agree' : 'disagree'}">
+                            Vy: ${d.uzivatelText}<br>
+                            Kandidát: ${d.kandidatText}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        appDiv.innerHTML = html;
+    }
+
+    // Spuštění aplikace po načtení stránky
+    vykresliOtazky();
+
+</script>
+</body>
+</html>
