@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profily kandidátů AS PřF UK</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="data.js"></script>
+    <!-- ?v=3: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <link rel="stylesheet" href="style.css?v=3">
+    <script src="data.js?v=3"></script>
 </head>
 <body>
 
@@ -15,8 +16,12 @@
     document.addEventListener("DOMContentLoaded", () => {
         const rozbalId = new URLSearchParams(window.location.search).get('kandidat');
         const appDiv = document.getElementById('app');
+        document.body.insertAdjacentHTML('afterbegin', testovaciBanner());
 
-        // Kandidáti se NEŘADÍ – zobrazují se v pořadí, v jakém jsou zapsaní v data.js.
+        // Řazení: podle pořadí sekcí v data.js (Biologie → Geografie → Chemie → Geologie a OŽP),
+        // uvnitř sekce v pořadí, v jakém jsou kandidáti zapsaní v data.js.
+        const poradiSekci = nazev => sekce.findIndex(s => s.nazev === nazev);
+        const serazeni = [...kandidati].sort((a, b) => poradiSekci(a.info.sekce) - poradiSekci(b.info.sekce));
 
         window.vykresliKandidaty = function(filtr = 'Vse', isFirst = false) {
             let html = isFirst ? `<div class="fade-in">` : `<div>`;
@@ -26,7 +31,7 @@
             }
             html += filtrySekci(filtr, 'vykresliKandidaty', true);
 
-            const seznam = filtr === 'Vse' ? kandidati : kandidati.filter(k => k.info.sekce === filtr);
+            const seznam = filtr === 'Vse' ? serazeni : serazeni.filter(k => k.info.sekce === filtr);
             if (seznam.length === 0) html += `<p style="text-align:center;">V této sekci zatím nikdo nekandiduje.</p>`;
 
             html += `<div class="kand-grid">`;
@@ -42,13 +47,17 @@
             }
         };
 
-        function inicialy(k) { return k.jmeno.split(' ').map(n => n[0]).join(''); }
+        // Fotka, nebo iniciály, když fotka chybí
+        function fotka(k) {
+            const inicialy = k.jmeno.split(' ').map(n => n[0]).join('');
+            return `<div class="kand-photo-placeholder">${k.foto ? `<img src="${k.foto}" alt="${k.jmeno}" loading="lazy">` : inicialy}</div>`;
+        }
 
         // Sbalená karta – kliknutím se otevře profil
         function malaKarta(k) {
             return `
                 <div class="kand-box" id="card-${k.id}" onclick="otevriKandidata('${k.id}')">
-                    <div class="kand-photo-placeholder">${inicialy(k)}</div>
+                    ${fotka(k)}
                     <div class="badge ${sekceTrida(k.info.sekce)}">${k.info.sekce}</div>
                     <h3 style="margin: 5px 0;">${k.jmeno}</h3>
                 </div>`;
@@ -57,19 +66,19 @@
         // Rozbalená karta – na kliknutí nereaguje, zavírá se jen tlačítkem
         function rozbalenaKarta(k) {
             const zpet = `<button class="submit-btn back-btn" onclick="zpetNaSeznam()">← Zpět na seznam kandidátů</button>`;
+            const radky = [`<strong>Obor:</strong> ${k.info.obor} (${k.info.rocnik})`];
+            if (k.info.kontakt) radky.push(`<strong>Kontakt:</strong> <a href="mailto:${k.info.kontakt}" style="color:var(--cyan);">${k.info.kontakt}</a>`);
+            if (k.info.odkaz) radky.push(`<strong>Program/CV:</strong> <a href="${k.info.odkaz}" target="_blank" style="color:var(--yellow);">Zobrazit web</a>`);
+
             let html = `
                 <div class="kand-box expanded" id="card-${k.id}">
                     ${zpet}
                     <div class="kand-header">
-                        <div class="kand-photo-placeholder">${inicialy(k)}</div>
+                        ${fotka(k)}
                         <div style="flex:1;">
                             <div class="badge ${sekceTrida(k.info.sekce)}">${k.info.sekce}</div>
                             <h3 style="margin: 5px 0;">${k.jmeno}</h3>
-                            <div style="font-size: 13px; color: #aaa; line-height: 1.4;">
-                                <strong>Obor:</strong> ${k.info.obor} (${k.info.rocnik}) <br>
-                                <strong>Kontakt:</strong> <a href="mailto:${k.info.kontakt}" style="color:var(--cyan);">${k.info.kontakt}</a> <br>
-                                <strong>Program/CV:</strong> <a href="${k.info.odkaz}" target="_blank" style="color:var(--yellow);">Zobrazit web</a>
-                            </div>
+                            <div style="font-size: 13px; color: #aaa; line-height: 1.4;">${radky.join('<br>')}</div>
                         </div>
                     </div>
                     <div class="kand-detail-content">
@@ -80,8 +89,10 @@
             if (komentovane.length === 0) html += `<div class="qa-a">Kandidát nevyplnil žádné doplňující komentáře.</div>`;
 
             html += `<h4>Nepříjemné otázky na tělo</h4>`;
-            (k.neprijemneOtazky || []).forEach(qa => html += qaBlok(qa.q, qa.a));
-            if (!k.neprijemneOtazky || k.neprijemneOtazky.length === 0) html += `<div class="qa-a">Žádné odpovědi v této sekci.</div>`;
+            if (TESTOVACI_DATA) html += `<div class="qa-poznamka">(Testovací odpovědi – vymyšlené, ne skutečné výroky kandidáta.)</div>`;
+            const zodpovezene = neprijemneOtazky.filter(n => k.neprijemne && k.neprijemne[n.id]);
+            zodpovezene.forEach(n => html += qaBlok(n.text, k.neprijemne[n.id]));
+            if (zodpovezene.length === 0) html += `<div class="qa-a">Žádné odpovědi v této sekci.</div>`;
 
             return html + `</div>${zpet}</div>`;
         }

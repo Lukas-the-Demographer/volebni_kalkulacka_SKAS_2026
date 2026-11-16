@@ -13,20 +13,26 @@ h4 { color: var(--magenta); text-align: left; margin-top: 20px; border-bottom: 1
 
 /* ===== BARVY SEKCÍ – jediné místo, kde se nastavují =====
    --s-bg     pozadí štítku a aktivního filtru
-   --s-barva  levý pruh karty ve výsledcích
+   --s-pruh   levý pruh karty ve výsledcích (shora dolů)
    --s-text   barva textu na pozadí --s-bg
-   --s-stin   stín textu (kvůli čitelnosti na přechodu) */
-.sekce-bio  { --s-bg: linear-gradient(45deg, #ff4500, #ff8c00); --s-barva: #ff4500; --s-text: white; --s-stin: none; }
-.sekce-geo  { --s-bg: #00d2ff;                                  --s-barva: #00d2ff; --s-text: black; --s-stin: none; }
-.sekce-chem { --s-bg: #ffdf00;                                  --s-barva: #ffdf00; --s-text: black; --s-stin: none; }
-.sekce-ozp  { --s-bg: linear-gradient(45deg, #8a2be2, #39ff14); --s-barva: #39ff14; --s-text: white; --s-stin: 1px 1px 2px black; }
+   --s-stin   stín textu (kvůli čitelnosti na přechodu)
+   Geologie a OŽP je spojená sekce: geologie = fialová, OŽP = zelená → přechod. */
+.sekce-bio  { --s-bg: linear-gradient(45deg, #ff4500, #ff8c00); --s-pruh: linear-gradient(#ff4500, #ff8c00); --s-text: white; --s-stin: none; }
+.sekce-geo  { --s-bg: #00d2ff;                                  --s-pruh: linear-gradient(#00d2ff, #00d2ff); --s-text: black; --s-stin: none; }
+.sekce-chem { --s-bg: #ffdf00;                                  --s-pruh: linear-gradient(#ffdf00, #ffdf00); --s-text: black; --s-stin: none; }
+.sekce-ozp  { --s-bg: linear-gradient(45deg, #8a2be2, #39ff14); --s-pruh: linear-gradient(#8a2be2, #39ff14); --s-text: white; --s-stin: 1px 1px 2px black; }
+
+/* Upozornění na testovací data */
+.test-banner { max-width: 750px; margin: 0 auto 10px; padding: 8px 15px; background: #3a2a00; border: 1px dashed var(--yellow); color: var(--yellow); font-size: 12px; text-align: center; box-sizing: border-box; }
 
 /* Instrukce / Tooltip boxy */
 .instruction-box { background: #333; border-left: 4px solid var(--cyan); padding: 10px 15px; font-size: 12.5px; color: #bbb; margin-bottom: 20px; }
 .instruction-box strong { color: var(--text); }
 
 .card { background: var(--panel); border-left: 3px solid #444; padding: 15px 20px; margin-bottom: 20px; }
-.card[class*="sekce-"] { border-left-color: var(--s-barva); }
+.card[class*="sekce-"] { border-image: var(--s-pruh) 1; }
+.res-head { display: flex; gap: 12px; align-items: center; }
+.res-photo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: #333; }
 .options { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
 button, a.btn { font-family: Verdana, sans-serif; display: inline-block; text-align: center; text-decoration: none; flex: 1; padding: 10px; border: 1px solid #555; background: #333; color: #ccc; cursor: pointer; font-size: 13px; transition: all 0.2s; box-sizing: border-box; }
 button:hover, a.btn:hover { background: #444; color: white; border-color: var(--cyan); }
@@ -69,7 +75,11 @@ button:hover, a.btn:hover { background: #444; color: white; border-color: var(--
 
 .kand-box.expanded { grid-column: 1 / -1; display: flex; flex-direction: column; text-align: left; border-color: var(--yellow); cursor: auto; }
 .kand-box.expanded .kand-header { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
-.kand-box.expanded .kand-photo-placeholder { width: 120px; height: 120px; margin: 0; flex-shrink: 0; }
+.kand-box.expanded .kand-photo-placeholder { width: 160px; height: 160px; margin: 0; flex-shrink: 0; }
+.kand-photo-placeholder img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; display: block; }
+.kand-photo-placeholder:has(img) { width: 110px; height: 110px; }
+.kand-box.expanded .kand-photo-placeholder:has(img) { width: 160px; height: 160px; }
+.qa-poznamka { font-size: 11px; color: #888; margin: -5px 0 10px; }
 .kand-box.expanded h3 { color: var(--cyan); text-align: left; }
 .kand-detail-content { display: none; }
 .kand-box.expanded .kand-detail-content { display: block; border-top: 1px solid #444; padding-top: 15px; }
