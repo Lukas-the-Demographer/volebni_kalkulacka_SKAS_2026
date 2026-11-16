@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profily kandidátů AS PřF UK</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="data.js"></script>
+</head>
+<body>
+
+<div class="container" id="app"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const rozbalId = urlParams.get('kandidat');
+        const appDiv = document.getElementById('app');
+
+        let html = `<div class="fade-in"><h1>Profily kandidátů</h1>`;
+        
+        if(rozbalId) {
+             html += `<p style="text-align:center; color:#888; font-size:12px;">(Zavřením této záložky se vrátíte do kalkulačky)</p>`;
+        }
+
+        html += `<div class="kand-grid">`;
+        kandidati.forEach(k => {
+            const isExpanded = (k.id === rozbalId);
+            const initials = k.jmeno.split(' ').map(n => n[0]).join('');
+            
+            html += `
+                <div class="kand-box ${isExpanded ? 'expanded' : ''}" id="card-${k.id}" onclick="toggleKandidat('${k.id}', event)">
+                    <div class="kand-header">
+                        <div class="kand-photo-placeholder">${initials}</div>
+                        <div style="flex:1;">
+                            <h3 style="margin: 0 0 5px 0; color: ${isExpanded ? 'var(--cyan)' : 'var(--text)'};">${k.jmeno}</h3>
+                            ${isExpanded ? `
+                                <div style="font-size: 13px; color: #aaa; line-height: 1.4;">
+                                    <strong>Sekce:</strong> ${k.info.sekce} <br>
+                                    <strong>Obor:</strong> ${k.info.obor} (${k.info.rocnik}) <br>
+                                    <strong>Kontakt:</strong> <a href="mailto:${k.info.kontakt}" style="color:var(--cyan);">${k.info.kontakt}</a> <br>
+                                    <strong>Program/CV:</strong> <a href="${k.info.odkaz}" target="_blank" style="color:var(--yellow);">Zobrazit web</a>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div class="kand-detail-content">
+                        <h4>Komentáře k anketě</h4>`;
+                        
+                        let hasComments = false;
+                        otazky.concat(oblasti).forEach(polozka => {
+                            if(k.komentare && k.komentare[polozka.id]) {
+                                hasComments = true;
+                                html += `<div class="qa-block"><div class="qa-q">${polozka.text}</div><div class="qa-a">${k.komentare[polozka.id]}</div></div>`;
+                            }
+                        });
+                        if(!hasComments) html += `<div class="qa-a">Kandidát nevyplnil žádné doplňující komentáře.</div>`;
+
+                        html += `<h4>Nepříjemné otázky na tělo</h4>`;
+                        if(k.neprijemneOtazky && k.neprijemneOtazky.length > 0) {
+                            k.neprijemneOtazky.forEach(qa => {
+                                html += `<div class="qa-block"><div class="qa-q">${qa.q}</div><div class="qa-a">${qa.a}</div></div>`;
+                            });
+                        } else {
+                            html += `<div class="qa-a">Žádné odpovědi v této sekci.</div>`;
+                        }
+            html += `</div></div>`;
+        });
+        html += `</div></div>`;
+        appDiv.innerHTML = html;
+
+        if(rozbalId) {
+            setTimeout(() => {
+                const el = document.getElementById('card-' + rozbalId);
+                if(el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        window.toggleKandidat = function(id, event) {
+            if(event.target.tagName.toLowerCase() === 'a') return;
+            const kBox = document.getElementById('card-' + id);
+            const isCurrentlyExpanded = kBox.classList.contains('expanded');
+            
+            // Pro zachování logiky přepíšeme URL a přesměrujeme (nebo překreslíme)
+            if (isCurrentlyExpanded) {
+                window.location.href = "kandidati.html";
+            } else {
+                window.location.href = "kandidati.html?kandidat=" + id;
+            }
+        };
+    });
+</script>
+</body>
+</html>

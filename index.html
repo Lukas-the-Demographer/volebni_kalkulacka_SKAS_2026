@@ -4,233 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volební kalkulačka AS PřF UK</title>
-    <style>
-        /* Modernější pojetí retro barev - trochu tlumenější, aby netahaly oči */
-        :root {
-            --bg: #1a1a1a;
-            --panel: #262626;
-            --text: #e0e0e0;
-            --cyan: #00d2ff;
-            --magenta: #ff007f;
-            --yellow: #ffdf00;
-            --green: #39ff14;
-        }
-
-        body { 
-            /* Verdana byla standardem webu kolem roku 2000 */
-            font-family: Verdana, sans-serif; 
-            background-color: var(--bg); 
-            color: var(--text); 
-            line-height: 1.6; 
-            padding: 20px; 
-            font-size: 14px;
-        }
-
-        /* Plynulé animace místo blikání */
-        .fade-in { animation: fadeIn 0.8s ease-in forwards; }
-        .fade-out { animation: fadeOut 0.8s ease-out forwards; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; display: none; } }
-
-        .container { 
-            max-width: 650px; 
-            margin: 0 auto; 
-            background: var(--bg); 
-            padding: 20px; 
-            border-top: 4px solid var(--cyan);
-            border-bottom: 4px solid var(--magenta);
-            min-height: 200px;
-        }
-
-        h1, h2, h3 { color: var(--yellow); text-align: center; font-weight: normal; }
-        h1 { font-size: 24px; margin-bottom: 30px; letter-spacing: 1px; }
-        h2 { font-size: 18px; color: var(--cyan); border-bottom: 1px solid #444; padding-bottom: 10px; }
-        
-        .card { 
-            background: var(--panel);
-            border-left: 3px solid #444; 
-            padding: 15px 20px; 
-            margin-bottom: 20px; 
-        }
-
-        .options { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        
-        button { 
-            font-family: Verdana, sans-serif;
-            flex: 1; padding: 10px; border: 1px solid #555; background: #333; color: #ccc;
-            cursor: pointer; font-size: 13px; transition: all 0.2s;
-        }
-
-        /* Barvy tlačítek - aktivují se naplno až při najetí nebo kliknutí */
-        button:hover { background: #444; color: white; }
-        
-        .btn-ano.selected { background-color: var(--cyan); color: black; border-color: var(--cyan); font-weight: bold; }
-        .btn-ne.selected { background-color: var(--magenta); color: black; border-color: var(--magenta); font-weight: bold; }
-        .btn-nevim.selected { background-color: var(--yellow); color: black; border-color: var(--yellow); font-weight: bold; }
-
-        .btn-prio.selected { background-color: var(--magenta); color: black; border-color: var(--magenta); font-weight: bold; }
-        .btn-mid.selected { background-color: var(--cyan); color: black; border-color: var(--cyan); font-weight: bold; }
-        .btn-low.selected { background-color: #888; color: white; border-color: #888; font-weight: bold; }
-
-        .submit-btn { 
-            background-color: transparent; color: var(--yellow); border: 2px solid var(--yellow); 
-            width: 100%; padding: 15px; font-size: 16px; margin-top: 20px; font-weight: bold;
-        }
-        .submit-btn:hover { background-color: var(--yellow); color: black; }
-        
-        .match-bar { background: #333; margin: 15px 0; height: 15px; border-radius: 3px; overflow: hidden; }
-        .match-fill { background: var(--cyan); height: 100%; transition: width 0.5s ease-out; }
-        
-        .counter-box { 
-            position: sticky; top: 0; background: var(--bg); padding: 15px 10px; 
-            border-bottom: 1px solid #444; margin-bottom: 20px; text-align: center; z-index: 100; 
-        }
-        .counter { display: inline-block; padding: 5px 10px; margin: 0 5px; font-size: 13px; color: #888; }
-        .counter.ok { color: var(--cyan); font-weight: bold; }
-        .counter.err { color: var(--magenta); font-weight: bold; }
-        
-        .detail-btn { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); width: auto; margin-top: 10px; }
-        .detail-btn:hover { background: var(--cyan); color: black; }
-        
-        .detail-item { padding: 12px 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; font-size: 13px; }
-        
-        /* Intro obrazovka */
-        .intro-screen { text-align: center; padding: 60px 20px; }
-        .intro-q { font-size: 22px; color: var(--yellow); margin-bottom: 50px; }
-        .intro-btn { font-size: 20px; color: var(--cyan); border: 2px solid var(--cyan); padding: 15px 40px; width: auto; background: transparent; }
-        .intro-btn:hover { background: var(--cyan); color: black; }
-        .intro-msg { font-size: 24px; color: var(--magenta); margin-top: 80px; }
-    </style>
+    <!-- Načtení designu a databáze z vedlejších souborů -->
+    <link rel="stylesheet" href="style.css">
+    <script src="data.js"></script>
 </head>
 <body>
 
-<div class="container" id="app">
-    <!-- Prázdný kontejner, načte se přes JS -->
-</div>
+<div class="container" id="app"></div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         
-        // --- NASTAVENÍ ---
-        const limitPriorit = 2; // ZMĚŇ NA 5, AŽ BUDEŠ MÍT 15 OBLASTÍ
-
-        // --- DATABÁZE ---
-        const otazky = [
-            { id: 'q1', text: 'Měly by se přednášky povinně nahrávat?' },
-            { id: 'q2', text: 'Jste pro zavedení elektronického indexu pro všechny?' }
-        ];
-
-        const oblasti = [
-            { id: 'o1', text: 'Reforma doktorského studia' },
-            { id: 'o2', text: 'Dotování menzy a bufetů' },
-            { id: 'o3', text: 'Zahraniční výjezdy a Erasmus' },
-            { id: 'o4', text: 'Podpora studentských spolků' },
-            { id: 'o5', text: 'Ekologizace provozu fakulty' },
-            { id: 'o6', text: 'Opravy a vybavení laboratoří' }
-        ];
-
-        const kandidati = [
-            { jmeno: 'Jan Novák', odpovedi: { q1: 1, q2: -1 }, priority: { o1: 3, o2: 3, o3: 2, o4: 2, o5: 1, o6: 1 } },
-            { jmeno: 'Petra Svobodová', odpovedi: { q1: 1, q2: 1 }, priority: { o1: 1, o2: 1, o3: 2, o4: 2, o5: 3, o6: 3 } }
-        ];
+        // Rachejtle
+        document.addEventListener('click', function(e) {
+            const colors = ['#00d2ff', '#ff007f', '#ffdf00', '#39ff14'];
+            for(let i = 0; i < 10; i++) {
+                let spark = document.createElement('div');
+                spark.className = 'spark';
+                spark.style.left = e.clientX + 'px';
+                spark.style.top = e.clientY + 'px';
+                spark.style.background = colors[Math.floor(Math.random() * colors.length)];
+                let angle = (i / 10) * Math.PI * 2;
+                let velocity = 30 + Math.random() * 40;
+                spark.style.setProperty('--dx', Math.cos(angle) * velocity + 'px');
+                spark.style.setProperty('--dy', Math.sin(angle) * velocity + 'px');
+                document.body.appendChild(spark);
+                setTimeout(() => spark.remove(), 600);
+            }
+        });
 
         let uzivOdpovedi = {};
         let uzivPriority = {};
         const appDiv = document.getElementById('app');
 
-        // INTRO
         function vykresliIntro() {
             appDiv.innerHTML = `
                 <div class="intro-screen fade-in" id="introBox">
                     <div class="intro-q">Chceš, aby naše přírodověda vzkvétala?</div>
-                    <button class="intro-btn" id="startBtn">Chci</button>
-                </div>
-            `;
-            document.getElementById('startBtn').addEventListener('click', spustAnimaci);
+                    <button class="submit-btn" style="width:auto; padding: 15px 40px;" id="startBtn">Chci</button>
+                </div>`;
+            document.getElementById('startBtn').addEventListener('click', vykresliMenu);
         }
 
-        function spustAnimaci() {
-            const introBox = document.getElementById('introBox');
-            introBox.classList.remove('fade-in');
-            introBox.classList.add('fade-out');
-            
-            setTimeout(() => {
-                appDiv.innerHTML = `
-                    <div class="intro-screen fade-in" id="msgBox">
-                        <div class="intro-msg">Tak to jsi tu správně.</div>
+        function vykresliMenu() {
+            appDiv.innerHTML = `
+                <div class="intro-screen fade-in">
+                    <div class="intro-msg">Tak to jsi tu správně.</div>
+                    <div style="color: #888; font-size: 13px;">Vyber si, co tě zajímá:</div>
+                    <div class="menu-grid">
+                        <a href="kandidati.html" target="_blank" class="menu-square">Profil kandidátů</a>
+                        <div class="menu-square alt" onclick="vykresliFormular()">Spustit kalkulačku</div>
                     </div>
-                `;
-                
-                setTimeout(() => {
-                    const msgBox = document.getElementById('msgBox');
-                    msgBox.classList.remove('fade-in');
-                    msgBox.classList.add('fade-out');
-                    
-                    setTimeout(() => {
-                        vykresliFormular();
-                    }, 600); // Konec odjezdu zprávy
-                }, 1500); // Doba zobrazení zprávy
-            }, 600); // Konec odjezdu inta
+                </div>`;
         }
 
-        // GLOBÁLNÍ FUNKCE PRO HTML TLAČÍTKA
         window.odpovezOtazku = function(id, val) { uzivOdpovedi[id] = val; vykresliFormular(); };
         window.odpovezPrioritu = function(id, val) { uzivPriority[id] = val; vykresliFormular(); };
         
-        window.zkontrolujAVyhodnot = function() {
-            const pocty = spocitejPriority();
-            if (pocty.p3 !== limitPriorit || pocty.p2 !== limitPriorit || pocty.p1 !== limitPriorit) {
-                alert(`Zkontrolujte prosím priority. Je potřeba vybrat přesně ${limitPriorit} od každé důležitosti.`);
-                return;
-            }
-            
-            let vysledky = kandidati.map(kand => {
-                let maxBodu = 0, ziskaneBody = 0, detaily = [];
-
-                otazky.forEach(o => {
-                    const u = uzivOdpovedi[o.id];
-                    const k = kand.odpovedi[o.id];
-                    if (u === 1 || u === -1) {
-                        maxBodu += 2;
-                        let jeShoda = (u === k);
-                        if (jeShoda) ziskaneBody += 2;
-                        detaily.push({
-                            typ: 'otazka', text: o.text,
-                            uTxt: u === 1 ? 'Ano' : 'Ne',
-                            kTxt: k === 1 ? 'Ano' : (k === -1 ? 'Ne' : 'Nevyjádřil se'),
-                            body: jeShoda ? 2 : 0
-                        });
-                    }
-                });
-
-                oblasti.forEach(o => {
-                    const u = uzivPriority[o.id];
-                    const k = kand.priority[o.id];
-                    maxBodu += 2; 
-                    let bodyZaObl = 2 - Math.abs(u - k);
-                    ziskaneBody += bodyZaObl;
-                    const nazvy = {3: 'Priorita', 2: 'Důležité', 1: 'Okrajové'};
-                    detaily.push({
-                        typ: 'priorita', text: o.text,
-                        uTxt: nazvy[u], kTxt: nazvy[k], body: bodyZaObl
-                    });
-                });
-
-                const procento = maxBodu > 0 ? Math.round((ziskaneBody / maxBodu) * 100) : 0;
-                return { jmeno: kand.jmeno, procento, detaily };
-            });
-
-            vysledky.sort((a, b) => b.procento - a.procento);
-            vykresliVysledky(vysledky);
-        };
-        
         window.vykresliFormular = function() {
-            const pocty = spocitejPriority();
-            let html = `<div class="fade-in">`;
-            html += `<h1>Volební kalkulačka AS PřF UK</h1>`;
-            
-            html += `<h2>1. Otázky</h2>`;
+            let pocty = { p3:0, p2:0, p1:0 };
+            Object.values(uzivPriority).forEach(v => { if(v===3) pocty.p3++; if(v===2) pocty.p2++; if(v===1) pocty.p1++; });
+
+            let html = `<div class="fade-in"><h1>Volební kalkulačka</h1><h2>1. Otázky</h2>`;
             otazky.forEach(o => {
                 const z = uzivOdpovedi[o.id];
                 html += `
@@ -244,9 +79,7 @@
                     </div>`;
             });
 
-            html += `<h2>2. Téma a priority</h2>`;
-            
-            html += `
+            html += `<h2>2. Téma a priority</h2>
                 <div class="counter-box">
                     <span class="counter ${pocty.p3 === limitPriorit ? 'ok' : (pocty.p3 > limitPriorit ? 'err' : '')}">Priorita: ${pocty.p3}/${limitPriorit}</span> |
                     <span class="counter ${pocty.p2 === limitPriorit ? 'ok' : (pocty.p2 > limitPriorit ? 'err' : '')}">Důležité: ${pocty.p2}/${limitPriorit}</span> |
@@ -266,71 +99,85 @@
                     </div>`;
             });
 
-            html += `<button class="submit-btn" onclick="zkontrolujAVyhodnot()">Spustit vyhodnocení</button>`;
-            html += `</div>`;
+            html += `<button class="submit-btn" onclick="zkontrolujAVyhodnot()">Vyhodnotit shodu</button></div>`;
             appDiv.innerHTML = html;
         };
 
-        window.zobrazDetail = function(idx) {
-            const v = window[`kandData_${idx}`];
-            let html = `<div class="fade-in">`;
-            html += `<button class="submit-btn" style="padding: 10px; margin-bottom: 20px; font-size: 14px;" onclick="zkontrolujAVyhodnot()">← Zpět na výsledky</button>`;
-            html += `<h2>Detailní shoda: ${v.jmeno}</h2>`;
+        window.zkontrolujAVyhodnot = function() {
+            let pocty = { p3:0, p2:0, p1:0 };
+            Object.values(uzivPriority).forEach(v => { if(v===3) pocty.p3++; if(v===2) pocty.p2++; if(v===1) pocty.p1++; });
 
-            html += `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">Otázky</h3>`;
-            v.detaily.filter(d => d.typ === 'otazka').forEach(d => {
-                html += `<div class="detail-item">
-                            <div style="width: 65%; padding-right: 15px;">${d.text}</div>
-                            <div style="width: 35%; text-align: right; color: ${d.body === 2 ? 'var(--cyan)' : 'var(--magenta)'};">
-                                Vy: ${d.uTxt}<br>Kandidát: ${d.kTxt}
-                            </div>
-                         </div>`;
+            if (pocty.p3 !== limitPriorit || pocty.p2 !== limitPriorit || pocty.p1 !== limitPriorit) {
+                alert(`Zkontrolujte priority. Je potřeba vybrat přesně ${limitPriorit} od každé důležitosti.`);
+                return;
+            }
+            
+            let vysledky = kandidati.map(kand => {
+                let maxBodu = 0, ziskaneBody = 0, detaily = [];
+
+                otazky.forEach(o => {
+                    const u = uzivOdpovedi[o.id];
+                    const k = kand.odpovedi[o.id];
+                    if (u === 1 || u === -1) {
+                        maxBodu += 2;
+                        let jeShoda = (u === k);
+                        if (jeShoda) ziskaneBody += 2;
+                        detaily.push({ typ: 'otazka', text: o.text, uTxt: u===1?'Ano':'Ne', kTxt: k===1?'Ano':(k===-1?'Ne':'Nevyjádřil se'), body: jeShoda?2:0 });
+                    }
+                });
+
+                oblasti.forEach(o => {
+                    const u = uzivPriority[o.id];
+                    const k = kand.priority[o.id];
+                    maxBodu += 2; 
+                    let bodyZaObl = 2 - Math.abs(u - k);
+                    ziskaneBody += bodyZaObl;
+                    const nazvy = {3: 'Priorita', 2: 'Důležité', 1: 'Okrajové'};
+                    detaily.push({ typ: 'priorita', text: o.text, uTxt: nazvy[u], kTxt: nazvy[k], body: bodyZaObl });
+                });
+
+                const procento = maxBodu > 0 ? Math.round((ziskaneBody / maxBodu) * 100) : 0;
+                return { id: kand.id, jmeno: kand.jmeno, procento, detaily };
             });
 
-            html += `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">Oblasti (Priority)</h3>`;
-            v.detaily.filter(d => d.typ === 'priorita').forEach(d => {
-                let barva = d.body === 2 ? 'var(--cyan)' : (d.body === 1 ? 'var(--yellow)' : 'var(--magenta)');
-                html += `<div class="detail-item">
-                            <div style="width: 65%; padding-right: 15px;">${d.text}</div>
-                            <div style="width: 35%; text-align: right; color: ${barva};">
-                                Vy: ${d.uTxt}<br>Kandidát: ${d.kTxt}
-                            </div>
-                         </div>`;
-            });
-            html += `</div>`;
-            appDiv.innerHTML = html;
+            vysledky.sort((a, b) => b.procento - a.procento);
+            vykresliVysledky(vysledky);
         };
 
         window.vykresliVysledky = function(vysledky) {
-            let html = `<div class="fade-in">`;
-            html += `<h1>Vaše shoda s kandidáty</h1>`;
-            
+            let html = `<div class="fade-in"><h1>Vaše shoda s kandidáty</h1>`;
             vysledky.forEach((v, idx) => {
                 window[`kandData_${idx}`] = v; 
                 html += `
                     <div class="card" style="border-left-color: var(--cyan);">
                         <h3 style="text-align: left; color: white; margin-top: 0;">${v.jmeno} <span style="float:right; color: var(--cyan);">${v.procento} %</span></h3>
                         <div class="match-bar"><div class="match-fill" style="width: ${v.procento}%"></div></div>
-                        <button class="detail-btn" onclick="zobrazDetail(${idx})">Porovnat odpovědi</button>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="zobrazDetail(${idx})" style="border-color:var(--cyan); color:var(--cyan);">Porovnat odpovědi</button>
+                            <a href="kandidati.html?kandidat=${v.id}" target="_blank" class="btn" style="border-color:var(--yellow); color:var(--yellow);">Profil kandidáta ↗</a>
+                        </div>
                     </div>`;
             });
-            
-            html += `<button class="submit-btn" style="border-color: #888; color: #ccc;" onclick="vykresliFormular()">Upravit moje odpovědi</button>`;
+            html += `<button class="submit-btn" style="border-color: #888; color: #ccc;" onclick="vykresliFormular()">Upravit moje odpovědi</button></div>`;
+            appDiv.innerHTML = html;
+        };
+
+        window.zobrazDetail = function(idx) {
+            const v = window[`kandData_${idx}`];
+            let html = `<div class="fade-in"><button class="submit-btn" style="padding: 10px; margin-bottom: 20px; font-size: 14px;" onclick="zkontrolujAVyhodnot()">← Zpět na výsledky</button><h2>Detailní shoda: ${v.jmeno}</h2>`;
+            html += `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">Otázky</h3>`;
+            v.detaily.filter(d => d.typ === 'otazka').forEach(d => {
+                html += `<div class="detail-item"><div style="width: 65%; padding-right: 15px;">${d.text}</div><div style="width: 35%; text-align: right; color: ${d.body === 2 ? 'var(--cyan)' : 'var(--magenta)'};">Vy: ${d.uTxt}<br>Kand: ${d.kTxt}</div></div>`;
+            });
+            html += `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">Oblasti (Priority)</h3>`;
+            v.detaily.filter(d => d.typ === 'priorita').forEach(d => {
+                let barva = d.body === 2 ? 'var(--cyan)' : (d.body === 1 ? 'var(--yellow)' : 'var(--magenta)');
+                html += `<div class="detail-item"><div style="width: 65%; padding-right: 15px;">${d.text}</div><div style="width: 35%; text-align: right; color: ${barva};">Vy: ${d.uTxt}<br>Kand: ${d.kTxt}</div></div>`;
+            });
             html += `</div>`;
             appDiv.innerHTML = html;
         };
 
-        function spocitejPriority() {
-            let p3 = 0, p2 = 0, p1 = 0;
-            Object.values(uzivPriority).forEach(v => {
-                if(v === 3) p3++;
-                if(v === 2) p2++;
-                if(v === 1) p1++;
-            });
-            return { p3, p2, p1 };
-        }
-
-        // Spuštění intrem
         vykresliIntro();
     });
 </script>
