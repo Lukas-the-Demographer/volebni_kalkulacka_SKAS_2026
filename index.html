@@ -3,113 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volební kalkulačka do AS PřF UK (Y2K Edition)</title>
-    <!-- Retro pixelový font -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Volební kalkulačka AS PřF UK</title>
     <style>
+        /* Modernější pojetí retro barev - trochu tlumenější, aby netahaly oči */
         :root {
-            --cyan: #00FFFF;
-            --magenta: #FF00FF;
-            --yellow: #FFFF00;
-            --black: #000000;
-            --white: #FFFFFF;
+            --bg: #1a1a1a;
+            --panel: #262626;
+            --text: #e0e0e0;
+            --cyan: #00d2ff;
+            --magenta: #ff007f;
+            --yellow: #ffdf00;
+            --green: #39ff14;
         }
 
         body { 
-            font-family: 'Press Start 2P', monospace; 
-            background-color: var(--black); 
-            color: var(--cyan); 
-            line-height: 1.8; 
+            /* Verdana byla standardem webu kolem roku 2000 */
+            font-family: Verdana, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6; 
             padding: 20px; 
-            font-size: 10px;
-            text-transform: uppercase;
+            font-size: 14px;
         }
 
-        .cmyk-seizure { animation: flash 0.1s infinite; }
-        @keyframes flash {
-            0% { background-color: var(--black); color: var(--magenta); }
-            33% { background-color: var(--cyan); color: var(--black); }
-            66% { background-color: var(--magenta); color: var(--yellow); }
-            100% { background-color: var(--yellow); color: var(--black); }
-        }
-
-        .blink { animation: blinker 1s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
+        /* Plynulé animace místo blikání */
+        .fade-in { animation: fadeIn 0.8s ease-in forwards; }
+        .fade-out { animation: fadeOut 0.8s ease-out forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; display: none; } }
 
         .container { 
             max-width: 650px; 
             margin: 0 auto; 
-            background: var(--black); 
+            background: var(--bg); 
             padding: 20px; 
-            border: 4px solid var(--magenta); 
-            box-shadow: 10px 10px 0px var(--cyan); 
+            border-top: 4px solid var(--cyan);
+            border-bottom: 4px solid var(--magenta);
             min-height: 200px;
         }
 
-        h1, h2, h3 { color: var(--yellow); text-align: center; text-shadow: 2px 2px var(--magenta); line-height: 1.5; }
-        h1 { font-size: 18px; margin-bottom: 30px; }
+        h1, h2, h3 { color: var(--yellow); text-align: center; font-weight: normal; }
+        h1 { font-size: 24px; margin-bottom: 30px; letter-spacing: 1px; }
+        h2 { font-size: 18px; color: var(--cyan); border-bottom: 1px solid #444; padding-bottom: 10px; }
         
-        .card { border: 2px solid var(--cyan); padding: 15px; margin-bottom: 20px; background: #0a0a0a; }
+        .card { 
+            background: var(--panel);
+            border-left: 3px solid #444; 
+            padding: 15px 20px; 
+            margin-bottom: 20px; 
+        }
+
         .options { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
         
         button { 
-            font-family: 'Press Start 2P', monospace; 
-            flex: 1; padding: 12px; border: 2px solid; background: transparent; 
-            cursor: pointer; text-transform: uppercase; font-size: 10px; transition: all 0.1s;
+            font-family: Verdana, sans-serif;
+            flex: 1; padding: 10px; border: 1px solid #555; background: #333; color: #ccc;
+            cursor: pointer; font-size: 13px; transition: all 0.2s;
         }
 
-        .btn-ano { color: var(--cyan); border-color: var(--cyan); }
-        .btn-ano:hover, .btn-ano.selected { background-color: var(--cyan); color: var(--black); }
-        .btn-ne { color: var(--magenta); border-color: var(--magenta); }
-        .btn-ne:hover, .btn-ne.selected { background-color: var(--magenta); color: var(--black); }
-        .btn-nevim { color: var(--yellow); border-color: var(--yellow); }
-        .btn-nevim:hover, .btn-nevim.selected { background-color: var(--yellow); color: var(--black); }
+        /* Barvy tlačítek - aktivují se naplno až při najetí nebo kliknutí */
+        button:hover { background: #444; color: white; }
+        
+        .btn-ano.selected { background-color: var(--cyan); color: black; border-color: var(--cyan); font-weight: bold; }
+        .btn-ne.selected { background-color: var(--magenta); color: black; border-color: var(--magenta); font-weight: bold; }
+        .btn-nevim.selected { background-color: var(--yellow); color: black; border-color: var(--yellow); font-weight: bold; }
 
-        .btn-prio { color: var(--magenta); border-color: var(--magenta); }
-        .btn-prio:hover, .btn-prio.selected { background-color: var(--magenta); color: var(--black); }
-        .btn-mid { color: var(--cyan); border-color: var(--cyan); }
-        .btn-mid:hover, .btn-mid.selected { background-color: var(--cyan); color: var(--black); }
-        .btn-low { color: var(--white); border-color: var(--white); }
-        .btn-low:hover, .btn-low.selected { background-color: var(--white); color: var(--black); }
+        .btn-prio.selected { background-color: var(--magenta); color: black; border-color: var(--magenta); font-weight: bold; }
+        .btn-mid.selected { background-color: var(--cyan); color: black; border-color: var(--cyan); font-weight: bold; }
+        .btn-low.selected { background-color: #888; color: white; border-color: #888; font-weight: bold; }
 
-        .submit-btn { background-color: transparent; color: var(--yellow); border: 4px solid var(--yellow); width: 100%; padding: 15px; font-size: 12px; margin-top: 20px; }
-        .submit-btn:hover { background-color: var(--yellow); color: var(--black); box-shadow: inset 0 0 0 3px var(--black); }
+        .submit-btn { 
+            background-color: transparent; color: var(--yellow); border: 2px solid var(--yellow); 
+            width: 100%; padding: 15px; font-size: 16px; margin-top: 20px; font-weight: bold;
+        }
+        .submit-btn:hover { background-color: var(--yellow); color: black; }
         
-        .match-bar { border: 2px solid var(--white); background: var(--black); margin: 15px 0; height: 20px; padding: 2px; }
-        .match-fill { background: var(--magenta); height: 100%; transition: width 0.5s; }
+        .match-bar { background: #333; margin: 15px 0; height: 15px; border-radius: 3px; overflow: hidden; }
+        .match-fill { background: var(--cyan); height: 100%; transition: width 0.5s ease-out; }
         
-        .counter-box { position: sticky; top: 0; background: var(--black); padding: 10px; border-bottom: 2px solid var(--cyan); margin-bottom: 20px; text-align: center; z-index: 100; }
-        .counter { display: inline-block; padding: 5px; margin: 5px; border: 2px solid; }
-        .counter.ok { border-color: var(--cyan); color: var(--cyan); }
-        .counter.err { border-color: var(--magenta); color: var(--magenta); animation: blinker 0.5s linear infinite; }
+        .counter-box { 
+            position: sticky; top: 0; background: var(--bg); padding: 15px 10px; 
+            border-bottom: 1px solid #444; margin-bottom: 20px; text-align: center; z-index: 100; 
+        }
+        .counter { display: inline-block; padding: 5px 10px; margin: 0 5px; font-size: 13px; color: #888; }
+        .counter.ok { color: var(--cyan); font-weight: bold; }
+        .counter.err { color: var(--magenta); font-weight: bold; }
         
-        .detail-btn { border-color: var(--cyan); color: var(--cyan); width: 100%; margin-top: 10px; }
-        .detail-item { padding: 10px 0; border-bottom: 2px dashed #333; font-size: 9px; line-height: 1.5; }
+        .detail-btn { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); width: auto; margin-top: 10px; }
+        .detail-btn:hover { background: var(--cyan); color: black; }
         
-        .intro-screen { text-align: center; padding: 50px 20px; }
-        .intro-q { font-size: 18px; color: var(--yellow); line-height: 1.8; margin-bottom: 50px; }
-        .intro-btn { font-size: 24px; color: var(--cyan); border: 6px solid var(--cyan); padding: 20px; width: 80%; }
-        .intro-btn:hover { background: var(--cyan); color: var(--black); }
-        .intro-msg { font-size: 28px; font-weight: bold; margin-top: 80px; }
+        .detail-item { padding: 12px 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; font-size: 13px; }
+        
+        /* Intro obrazovka */
+        .intro-screen { text-align: center; padding: 60px 20px; }
+        .intro-q { font-size: 22px; color: var(--yellow); margin-bottom: 50px; }
+        .intro-btn { font-size: 20px; color: var(--cyan); border: 2px solid var(--cyan); padding: 15px 40px; width: auto; background: transparent; }
+        .intro-btn:hover { background: var(--cyan); color: black; }
+        .intro-msg { font-size: 24px; color: var(--magenta); margin-top: 80px; }
     </style>
 </head>
 <body>
 
 <div class="container" id="app">
-    <div style="text-align: center; padding: 50px; color: var(--cyan);" class="blink">
-        [ NAHRÁVÁM SYSTÉM... ]
-    </div>
+    <!-- Prázdný kontejner, načte se přes JS -->
 </div>
 
 <script>
-    // Pojistka, že se script spustí až po načtení prvků stránky
     document.addEventListener("DOMContentLoaded", () => {
         
+        // --- NASTAVENÍ ---
         const limitPriorit = 2; // ZMĚŇ NA 5, AŽ BUDEŠ MÍT 15 OBLASTÍ
 
+        // --- DATABÁZE ---
         const otazky = [
             { id: 'q1', text: 'Měly by se přednášky povinně nahrávat?' },
-            { id: 'q2', text: 'Jste pro zavedení elektronického indexu?' }
+            { id: 'q2', text: 'Jste pro zavedení elektronického indexu pro všechny?' }
         ];
 
         const oblasti = [
@@ -130,37 +139,49 @@
         let uzivPriority = {};
         const appDiv = document.getElementById('app');
 
+        // INTRO
         function vykresliIntro() {
             appDiv.innerHTML = `
-                <div class="intro-screen">
-                    <div class="intro-q blink">CHCEŠ, ABY NAŠE PŘÍRODOVĚDA VZKVÉTALA?</div>
-                    <button class="intro-btn" id="startBtn">CHCI</button>
+                <div class="intro-screen fade-in" id="introBox">
+                    <div class="intro-q">Chceš, aby naše přírodověda vzkvétala?</div>
+                    <button class="intro-btn" id="startBtn">Chci</button>
                 </div>
             `;
-            // Přidání event listeneru bezpečněji
             document.getElementById('startBtn').addEventListener('click', spustAnimaci);
         }
 
         function spustAnimaci() {
-            document.body.classList.add('cmyk-seizure');
-            appDiv.innerHTML = `
-                <div class="intro-screen">
-                    <div class="intro-msg">TAK TO SEŠ<br><br>TU SPRÁVNĚ!</div>
-                </div>
-            `;
+            const introBox = document.getElementById('introBox');
+            introBox.classList.remove('fade-in');
+            introBox.classList.add('fade-out');
+            
             setTimeout(() => {
-                document.body.classList.remove('cmyk-seizure');
-                vykresliFormular();
-            }, 1500);
+                appDiv.innerHTML = `
+                    <div class="intro-screen fade-in" id="msgBox">
+                        <div class="intro-msg">Tak to jsi tu správně.</div>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    const msgBox = document.getElementById('msgBox');
+                    msgBox.classList.remove('fade-in');
+                    msgBox.classList.add('fade-out');
+                    
+                    setTimeout(() => {
+                        vykresliFormular();
+                    }, 600); // Konec odjezdu zprávy
+                }, 1500); // Doba zobrazení zprávy
+            }, 600); // Konec odjezdu inta
         }
 
-        // Globální funkce (aby fungovaly z onclick v HTML)
+        // GLOBÁLNÍ FUNKCE PRO HTML TLAČÍTKA
         window.odpovezOtazku = function(id, val) { uzivOdpovedi[id] = val; vykresliFormular(); };
         window.odpovezPrioritu = function(id, val) { uzivPriority[id] = val; vykresliFormular(); };
+        
         window.zkontrolujAVyhodnot = function() {
             const pocty = spocitejPriority();
             if (pocty.p3 !== limitPriorit || pocty.p2 !== limitPriorit || pocty.p1 !== limitPriorit) {
-                alert(`SYSTEM ERROR: Označ přesně ${limitPriorit}x MAX, ${limitPriorit}x MID a ${limitPriorit}x LOW.`);
+                alert(`Zkontrolujte prosím priority. Je potřeba vybrat přesně ${limitPriorit} od každé důležitosti.`);
                 return;
             }
             
@@ -176,8 +197,8 @@
                         if (jeShoda) ziskaneBody += 2;
                         detaily.push({
                             typ: 'otazka', text: o.text,
-                            uTxt: u === 1 ? 'ANO' : 'NE',
-                            kTxt: k === 1 ? 'ANO' : (k === -1 ? 'NE' : 'SKIP'),
+                            uTxt: u === 1 ? 'Ano' : 'Ne',
+                            kTxt: k === 1 ? 'Ano' : (k === -1 ? 'Ne' : 'Nevyjádřil se'),
                             body: jeShoda ? 2 : 0
                         });
                     }
@@ -189,7 +210,7 @@
                     maxBodu += 2; 
                     let bodyZaObl = 2 - Math.abs(u - k);
                     ziskaneBody += bodyZaObl;
-                    const nazvy = {3: 'MAX', 2: 'MID', 1: 'LOW'};
+                    const nazvy = {3: 'Priorita', 2: 'Důležité', 1: 'Okrajové'};
                     detaily.push({
                         typ: 'priorita', text: o.text,
                         uTxt: nazvy[u], kTxt: nazvy[k], body: bodyZaObl
@@ -206,14 +227,15 @@
         
         window.vykresliFormular = function() {
             const pocty = spocitejPriority();
-            let html = `<h1>AS PřF UK - MISSION START</h1>`;
+            let html = `<div class="fade-in">`;
+            html += `<h1>Volební kalkulačka AS PřF UK</h1>`;
             
-            html += `<h2>[ LEVEL 1: ANO/NE ]</h2>`;
+            html += `<h2>1. Otázky</h2>`;
             otazky.forEach(o => {
                 const z = uzivOdpovedi[o.id];
                 html += `
                     <div class="card">
-                        <p>> ${o.text}</p>
+                        <p>${o.text}</p>
                         <div class="options">
                             <button class="btn-ano ${z === 1 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', 1)">Ano</button>
                             <button class="btn-ne ${z === -1 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', -1)">Ne</button>
@@ -222,76 +244,79 @@
                     </div>`;
             });
 
-            html += `<h2>[ LEVEL 2: PRIORITY ]</h2>`;
-            html += `<p style="text-align:center; color: var(--magenta);">TARGET: ${limitPriorit} OD KAŽDÉHO</p>`;
+            html += `<h2>2. Téma a priority</h2>`;
             
             html += `
                 <div class="counter-box">
-                    <span class="counter ${pocty.p3 === limitPriorit ? 'ok' : 'err'}">Prio: ${pocty.p3}/${limitPriorit}</span>
-                    <span class="counter ${pocty.p2 === limitPriorit ? 'ok' : 'err'}">Mid: ${pocty.p2}/${limitPriorit}</span>
-                    <span class="counter ${pocty.p1 === limitPriorit ? 'ok' : 'err'}">Low: ${pocty.p1}/${limitPriorit}</span>
+                    <span class="counter ${pocty.p3 === limitPriorit ? 'ok' : (pocty.p3 > limitPriorit ? 'err' : '')}">Priorita: ${pocty.p3}/${limitPriorit}</span> |
+                    <span class="counter ${pocty.p2 === limitPriorit ? 'ok' : (pocty.p2 > limitPriorit ? 'err' : '')}">Důležité: ${pocty.p2}/${limitPriorit}</span> |
+                    <span class="counter ${pocty.p1 === limitPriorit ? 'ok' : (pocty.p1 > limitPriorit ? 'err' : '')}">Okrajové: ${pocty.p1}/${limitPriorit}</span>
                 </div>`;
 
             oblasti.forEach(o => {
                 const z = uzivPriority[o.id];
                 html += `
                     <div class="card">
-                        <p>> ${o.text}</p>
+                        <p>${o.text}</p>
                         <div class="options">
-                            <button class="btn-prio ${z === 3 ? 'selected' : ''}" onclick="odpovezPrioritu('${o.id}', 3)">MAX</button>
-                            <button class="btn-mid ${z === 2 ? 'selected' : ''}" onclick="odpovezPrioritu('${o.id}', 2)">MID</button>
-                            <button class="btn-low ${z === 1 ? 'selected' : ''}" onclick="odpovezPrioritu('${o.id}', 1)">LOW</button>
+                            <button class="btn-prio ${z === 3 ? 'selected' : ''}" onclick="odpovezPrioritu('${o.id}', 3)">Priorita</button>
+                            <button class="btn-mid ${z === 2 ? 'selected' : ''}" onclick="odpovezPrioritu('${o.id}', 2)">Důležité</button>
+                            <button class="btn-low ${z === 1 ? 'selected' : ''}" onclick="odpovezPrioritu('${o.id}', 1)">Okrajové</button>
                         </div>
                     </div>`;
             });
 
-            html += `<button class="submit-btn" onclick="zkontrolujAVyhodnot()">>>> VYHODNOTIT <<<</button>`;
+            html += `<button class="submit-btn" onclick="zkontrolujAVyhodnot()">Spustit vyhodnocení</button>`;
+            html += `</div>`;
             appDiv.innerHTML = html;
         };
 
         window.zobrazDetail = function(idx) {
             const v = window[`kandData_${idx}`];
-            let html = `<button class="submit-btn" style="padding: 10px; margin-bottom: 20px;" onclick="zkontrolujAVyhodnot()"><<< BACK</button>
-                        <h2 style="color: var(--cyan); text-shadow: none;">DATA LOG: ${v.jmeno}</h2>`;
+            let html = `<div class="fade-in">`;
+            html += `<button class="submit-btn" style="padding: 10px; margin-bottom: 20px; font-size: 14px;" onclick="zkontrolujAVyhodnot()">← Zpět na výsledky</button>`;
+            html += `<h2>Detailní shoda: ${v.jmeno}</h2>`;
 
-            html += `<h3 style="text-align: left; color: var(--magenta);">[ LEVEL 1 ]</h3>`;
+            html += `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">Otázky</h3>`;
             v.detaily.filter(d => d.typ === 'otazka').forEach(d => {
                 html += `<div class="detail-item">
-                            <div style="margin-bottom: 5px; color: var(--white);">> ${d.text}</div>
-                            <div style="color: ${d.body === 2 ? 'var(--cyan)' : 'var(--magenta)'};">
-                                PLAYER: ${d.uTxt} | NPC: ${d.kTxt}
+                            <div style="width: 65%; padding-right: 15px;">${d.text}</div>
+                            <div style="width: 35%; text-align: right; color: ${d.body === 2 ? 'var(--cyan)' : 'var(--magenta)'};">
+                                Vy: ${d.uTxt}<br>Kandidát: ${d.kTxt}
                             </div>
                          </div>`;
             });
 
-            html += `<h3 style="text-align: left; color: var(--magenta); margin-top: 20px;">[ LEVEL 2 ]</h3>`;
+            html += `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">Oblasti (Priority)</h3>`;
             v.detaily.filter(d => d.typ === 'priorita').forEach(d => {
                 let barva = d.body === 2 ? 'var(--cyan)' : (d.body === 1 ? 'var(--yellow)' : 'var(--magenta)');
                 html += `<div class="detail-item">
-                            <div style="margin-bottom: 5px; color: var(--white);">> ${d.text}</div>
-                            <div style="color: ${barva};">
-                                PLAYER: ${d.uTxt} | NPC: ${d.kTxt}
+                            <div style="width: 65%; padding-right: 15px;">${d.text}</div>
+                            <div style="width: 35%; text-align: right; color: ${barva};">
+                                Vy: ${d.uTxt}<br>Kandidát: ${d.kTxt}
                             </div>
                          </div>`;
             });
-            
+            html += `</div>`;
             appDiv.innerHTML = html;
         };
 
         window.vykresliVysledky = function(vysledky) {
-            let html = `<h1>[ MISSION COMPLETED ]</h1>`;
+            let html = `<div class="fade-in">`;
+            html += `<h1>Vaše shoda s kandidáty</h1>`;
             
             vysledky.forEach((v, idx) => {
                 window[`kandData_${idx}`] = v; 
                 html += `
-                    <div class="card">
-                        <h3 style="text-align: left; color: var(--cyan); text-shadow: none;">${v.jmeno} <span style="float:right">${v.procento}%</span></h3>
+                    <div class="card" style="border-left-color: var(--cyan);">
+                        <h3 style="text-align: left; color: white; margin-top: 0;">${v.jmeno} <span style="float:right; color: var(--cyan);">${v.procento} %</span></h3>
                         <div class="match-bar"><div class="match-fill" style="width: ${v.procento}%"></div></div>
-                        <button class="detail-btn" onclick="zobrazDetail(${idx})">DATA LOG</button>
+                        <button class="detail-btn" onclick="zobrazDetail(${idx})">Porovnat odpovědi</button>
                     </div>`;
             });
             
-            html += `<button class="submit-btn" style="border-color: var(--white); color: var(--white);" onclick="vykresliFormular()">[ RESTART MISSION ]</button>`;
+            html += `<button class="submit-btn" style="border-color: #888; color: #ccc;" onclick="vykresliFormular()">Upravit moje odpovědi</button>`;
+            html += `</div>`;
             appDiv.innerHTML = html;
         };
 
@@ -305,7 +330,7 @@
             return { p3, p2, p1 };
         }
 
-        // Start
+        // Spuštění intrem
         vykresliIntro();
     });
 </script>
