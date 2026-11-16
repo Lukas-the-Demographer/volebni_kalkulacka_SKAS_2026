@@ -1,5 +1,30 @@
 const limitPriorit = 5;
 
+// --- SEKCE ---
+// Jediné místo, kde se sekce definují. Barvy jsou v style.css pod třídou .sekce-<klic>.
+const sekce = [
+    { nazev: 'Biologie',       klic: 'bio',  kratce: 'Biologie',   voli: 7 },
+    { nazev: 'Geografie',      klic: 'geo',  kratce: 'Geografie',  voli: 3 },
+    { nazev: 'Chemie',         klic: 'chem', kratce: 'Chemie',     voli: 2 },
+    { nazev: 'Geologie a OŽP', klic: 'ozp',  kratce: 'Geol & OŽP', voli: 2 }
+];
+
+// Vrátí CSS třídu barvy pro danou sekci, např. 'Biologie' → 'sekce-bio'
+function sekceTrida(nazev) {
+    const s = sekce.find(x => x.nazev === nazev);
+    return s ? 'sekce-' + s.klic : '';
+}
+
+// Lišta filtrů sekcí. aktivni = název sekce nebo 'Vse', fn = jméno funkce volané po kliknutí.
+function filtrySekci(aktivni, fn, sPoctemMandatu = false) {
+    let html = `<div class="filter-bar"><button class="filter-btn ${aktivni === 'Vse' ? 'active' : ''}" onclick="${fn}('Vse')">Celá fakulta</button>`;
+    sekce.forEach(s => {
+        const popis = sPoctemMandatu ? `${s.kratce} (Volí ${s.voli})` : s.nazev;
+        html += `<button class="filter-btn sekce-${s.klic} ${aktivni === s.nazev ? 'active' : ''}" onclick="${fn}('${s.nazev}')">${popis}</button>`;
+    });
+    return html + `</div>`;
+}
+
 // --- 15 OTÁZEK ---
 const otazky = [
     { id: 'q1', text: 'Měly by se přednášky povinně nahrávat i po covidu?' },
@@ -74,32 +99,55 @@ const kandidati = [
     }
 ];
 
-// --- ZÁTĚŽOVÝ GENERÁTOR (Tohle pak můžeš smazat) ---
-// Doplní počty kandidátů na požadované kvóty.
-const kvoty = { 'Biologie': 12, 'Geografie': 8, 'Chemie': 5, 'Geologie a OŽP': 9 };
-const soucasniStavy = { 'Biologie': 1, 'Geografie': 1, 'Chemie': 1, 'Geologie a OŽP': 1 };
-const jmena = ['David', 'Petr', 'Martin', 'Tomáš', 'Jakub', 'Filip', 'Jan', 'Ondřej', 'Lucie', 'Tereza', 'Anna', 'Adéla', 'Eliška', 'Kateřina'];
-const prijmeni = ['Kučera', 'Veselý', 'Horák', 'Němec', 'Marek', 'Pokorný', 'Kříž', 'Králová', 'Růžičková', 'Fialová', 'Bartošová', 'Vlčková'];
+// --- FIKTIVNÍ TESTOVACÍ KANDIDÁTI (pevná data, až budou skuteční, celý blok smaž) ---
+// Odpovědi jsou pole 15 hodnot v pořadí q1..q15 (1 = Ano, -1 = Ne, 0 = Nevím).
+// Priority: 3 = Priorita, 2 = Důležité, 1 = Okrajové.
+function fiktivni(id, jmeno, sekce, odp, priority) {
+    const odpovedi = {};
+    odp.forEach((v, i) => odpovedi['q' + (i + 1)] = v);
+    return {
+        id, jmeno, odpovedi, priority,
+        info: { sekce, obor: 'Fiktivní obor', rocnik: 'X. ročník', kontakt: 'fiktivni@natur.cuni.cz', odkaz: '#' },
+        komentare: {}, neprijemneOtazky: []
+    };
+}
 
-Object.keys(kvoty).forEach(sekce => {
-    while(soucasniStavy[sekce] < kvoty[sekce]) {
-        let n = jmena[Math.floor(Math.random()*jmena.length)];
-        let p = prijmeni[Math.floor(Math.random()*prijmeni.length)];
-        let fiktivni = {
-            id: `fiktivni_${sekce.substring(0,3)}_${soucasniStavy[sekce]}`,
-            jmeno: `${n} ${p}`,
-            info: { sekce: sekce, obor: 'Fiktivní obor', rocnik: 'X. ročník', kontakt: 'fiktivni@natur.cuni.cz', odkaz: '#' },
-            odpovedi: {}, priority: {}, komentare: {}, neprijemneOtazky: []
-        };
-        // Náhodné odpovědi a priority
-        otazky.forEach(q => fiktivni.odpovedi[q.id] = [-1, 0, 1][Math.floor(Math.random()*3)]);
-        let vybraneOblasti = [...oblasti].sort(() => 0.5 - Math.random()).slice(0, 12);
-        vybraneOblasti.forEach((o, index) => {
-            if(index < 4) fiktivni.priority[o.id] = 3;
-            else if(index < 8) fiktivni.priority[o.id] = 2;
-            else fiktivni.priority[o.id] = 1;
-        });
-        kandidati.push(fiktivni);
-        soucasniStavy[sekce]++;
-    }
-});
+kandidati.push(
+    // Biologie (+11 → celkem 12)
+    fiktivni('kucera',    'David Kučera',      'Biologie', [ 1, 1, 1, 0,-1, 1, 1,-1, 1, 1, 0, 1, 1,-1,-1], { o2: 3, o9: 3, o6: 2, o13: 2, o15: 1 }),
+    fiktivni('vesela',    'Petra Veselá',      'Biologie', [ 1, 0, 1,-1, 1, 1, 1, 1, 1, 1,-1, 1, 1, 1,-1], { o8: 3, o5: 3, o14: 2, o10: 2, o7: 1 }),
+    fiktivni('horak',     'Martin Horák',      'Biologie', [-1, 1,-1, 1,-1,-1, 0, 1,-1, 1, 1,-1, 1, 0, 1], { o1: 3, o6: 3, o12: 2, o11: 1 }),
+    fiktivni('nemcova',   'Tereza Němcová',    'Biologie', [ 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1,-1], { o3: 3, o7: 3, o8: 2, o4: 2, o2: 1 }),
+    fiktivni('marek',     'Jakub Marek',       'Biologie', [ 0,-1, 1, 1, 0,-1, 1,-1, 1, 0, 1, 0, 1,-1, 0], { o4: 3, o11: 3, o9: 2, o15: 1 }),
+    fiktivni('pokorna',   'Lucie Pokorná',     'Biologie', [ 1, 1, 1,-1, 1, 0, 0, 1, 1, 1,-1, 1, 1, 1,-1], { o10: 3, o8: 3, o14: 2, o5: 2, o12: 1 }),
+    fiktivni('kriz',      'Filip Kříž',        'Biologie', [-1, 1,-1, 1, 0,-1,-1, 1, 0, 1, 1,-1, 1,-1, 1], { o6: 3, o13: 3, o1: 2, o3: 1 }),
+    fiktivni('kralova',   'Anna Králová',      'Biologie', [ 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1,-1], { o5: 3, o15: 3, o2: 2, o7: 2, o9: 1 }),
+    fiktivni('ruzicka',   'Ondřej Růžička',    'Biologie', [ 1, 1,-1, 1,-1, 1, 0,-1, 1, 1, 1, 0, 1, 0, 0], { o1: 3, o12: 3, o3: 2, o6: 1 }),
+    fiktivni('fialova',   'Eliška Fialová',    'Biologie', [ 1, 1, 1,-1, 1, 1, 1, 0, 1, 1,-1, 1, 1, 1,-1], { o8: 3, o14: 3, o10: 2, o4: 1 }),
+    fiktivni('bartos',    'Tomáš Bartoš',      'Biologie', [ 0, 1, 0, 1,-1,-1, 1, 1, 0, 1, 1,-1, 1,-1, 1], { o13: 3, o9: 3, o11: 2, o2: 1 }),
+
+    // Geografie (+7 → celkem 8)
+    fiktivni('vlckova',   'Kateřina Vlčková',  'Geografie', [ 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,-1, 1, 1, 1,-1], { o9: 3, o5: 3, o7: 2, o15: 1 }),
+    fiktivni('prochazka', 'Jan Procházka',     'Geografie', [-1, 1,-1, 1,-1,-1, 0, 1,-1, 0, 1,-1, 1,-1, 1], { o12: 3, o13: 3, o3: 2, o6: 1 }),
+    fiktivni('simkova',   'Adéla Šimková',     'Geografie', [ 1, 0, 1,-1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0,-1], { o8: 3, o10: 3, o14: 2, o2: 2 }),
+    fiktivni('benes',     'Petr Beneš',        'Geografie', [ 0, 1, 1, 1, 0,-1, 1,-1, 1, 1, 1, 0, 1, 1, 0], { o4: 3, o11: 3, o9: 2, o1: 1 }),
+    fiktivni('duskova',   'Klára Dušková',     'Geografie', [ 1, 1, 0,-1, 1, 1, 0, 1, 1, 1,-1, 1, 1, 1,-1], { o5: 3, o15: 3, o8: 2, o7: 1 }),
+    fiktivni('holub',     'Vojtěch Holub',     'Geografie', [-1, 1,-1, 0,-1, 0,-1, 1, 0, 1, 1,-1, 1,-1, 1], { o6: 3, o3: 3, o12: 2, o13: 1 }),
+    fiktivni('sedlackova','Markéta Sedláčková','Geografie', [ 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0], { o2: 3, o7: 3, o4: 2, o14: 1 }),
+
+    // Chemie (+4 → celkem 5)
+    fiktivni('jelinek',   'Michal Jelínek',    'Chemie',   [-1, 1, 0, 1,-1,-1, 0, 1,-1, 1, 1,-1, 1, 0, 1], { o6: 3, o1: 3, o13: 2, o12: 1 }),
+    fiktivni('urbanova',  'Veronika Urbanová', 'Chemie',   [ 1, 1, 1,-1, 1, 1, 1, 1, 1, 1,-1, 1, 1, 1,-1], { o8: 3, o10: 3, o14: 2, o5: 1 }),
+    fiktivni('kolar',     'Pavel Kolář',       'Chemie',   [ 0, 1,-1, 1, 0,-1, 1,-1, 1, 1, 1, 0, 1,-1, 0], { o6: 3, o9: 3, o11: 2, o3: 1 }),
+    fiktivni('moravcova', 'Simona Moravcová',  'Chemie',   [ 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1,-1], { o7: 3, o2: 3, o15: 2, o4: 1 }),
+
+    // Geologie a OŽP (+8 → celkem 9)
+    fiktivni('pospisil',  'Matěj Pospíšil',    'Geologie a OŽP', [ 1, 1, 1, 0, 1, 1, 1, 0, 1, 1,-1, 1, 1, 0,-1], { o5: 3, o11: 3, o15: 2, o9: 1 }),
+    fiktivni('hajkova',   'Kristýna Hájková',  'Geologie a OŽP', [ 1, 0, 1,-1, 1, 1, 1, 1, 1, 1,-1, 1, 1, 1,-1], { o5: 3, o8: 3, o10: 2, o14: 1 }),
+    fiktivni('krejci',    'Štěpán Krejčí',     'Geologie a OŽP', [-1, 1,-1, 1, 0,-1, 0, 1,-1, 1, 1,-1, 1,-1, 1], { o6: 3, o12: 3, o1: 2, o13: 1 }),
+    fiktivni('zemanova',  'Nikola Zemanová',   'Geologie a OŽP', [ 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1,-1], { o15: 3, o7: 3, o2: 2, o4: 1 }),
+    fiktivni('stastny',   'Radek Šťastný',     'Geologie a OŽP', [ 0, 1, 1, 1,-1,-1, 1,-1, 0, 1, 1, 0, 1, 0, 0], { o9: 3, o4: 3, o13: 2, o3: 1 }),
+    fiktivni('blahova',   'Monika Bláhová',    'Geologie a OŽP', [ 1, 1, 1,-1, 1, 1, 1, 1, 1, 1,-1, 1, 1, 1,-1], { o5: 3, o10: 3, o8: 2, o15: 2, o11: 1 }),
+    fiktivni('navratil',  'Daniel Navrátil',   'Geologie a OŽP', [-1, 1, 0, 1,-1, 0,-1, 1, 0, 1, 1,-1, 1,-1, 1], { o1: 3, o6: 3, o12: 2, o3: 1 }),
+    fiktivni('kopecka',   'Hana Kopecká',      'Geologie a OŽP', [ 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1,-1], { o11: 3, o5: 3, o7: 2, o2: 1 })
+);

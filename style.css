@@ -11,11 +11,22 @@ h1 { font-size: 24px; margin-bottom: 20px; letter-spacing: 1px; }
 h2 { font-size: 18px; color: var(--cyan); border-bottom: 1px solid #444; padding-bottom: 10px; margin-top: 30px;}
 h4 { color: var(--magenta); text-align: left; margin-top: 20px; border-bottom: 1px dashed #444; padding-bottom: 5px; }
 
+/* ===== BARVY SEKCÍ – jediné místo, kde se nastavují =====
+   --s-bg     pozadí štítku a aktivního filtru
+   --s-barva  levý pruh karty ve výsledcích
+   --s-text   barva textu na pozadí --s-bg
+   --s-stin   stín textu (kvůli čitelnosti na přechodu) */
+.sekce-bio  { --s-bg: linear-gradient(45deg, #ff4500, #ff8c00); --s-barva: #ff4500; --s-text: white; --s-stin: none; }
+.sekce-geo  { --s-bg: #00d2ff;                                  --s-barva: #00d2ff; --s-text: black; --s-stin: none; }
+.sekce-chem { --s-bg: #ffdf00;                                  --s-barva: #ffdf00; --s-text: black; --s-stin: none; }
+.sekce-ozp  { --s-bg: linear-gradient(45deg, #8a2be2, #39ff14); --s-barva: #39ff14; --s-text: white; --s-stin: 1px 1px 2px black; }
+
 /* Instrukce / Tooltip boxy */
 .instruction-box { background: #333; border-left: 4px solid var(--cyan); padding: 10px 15px; font-size: 12.5px; color: #bbb; margin-bottom: 20px; }
 .instruction-box strong { color: var(--text); }
 
 .card { background: var(--panel); border-left: 3px solid #444; padding: 15px 20px; margin-bottom: 20px; }
+.card[class*="sekce-"] { border-left-color: var(--s-barva); }
 .options { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
 button, a.btn { font-family: Verdana, sans-serif; display: inline-block; text-align: center; text-decoration: none; flex: 1; padding: 10px; border: 1px solid #555; background: #333; color: #ccc; cursor: pointer; font-size: 13px; transition: all 0.2s; box-sizing: border-box; }
 button:hover, a.btn:hover { background: #444; color: white; border-color: var(--cyan); }
@@ -30,6 +41,7 @@ button:hover, a.btn:hover { background: #444; color: white; border-color: var(--
 
 .submit-btn { background-color: transparent; color: var(--yellow); border: 2px solid var(--yellow); width: 100%; padding: 15px; font-size: 16px; margin-top: 20px; font-weight: bold; }
 .submit-btn:hover { background-color: var(--yellow); color: black; }
+.back-btn { padding: 10px; margin: 0 0 20px 0; font-size: 14px; }
 
 .match-bar { background: #333; margin: 15px 0; height: 15px; border-radius: 3px; overflow: hidden; }
 .match-fill { background: var(--cyan); height: 100%; transition: width 0.5s ease-out; }
@@ -41,16 +53,13 @@ button:hover, a.btn:hover { background: #444; color: white; border-color: var(--
 
 .detail-item { padding: 12px 0; border-bottom: 1px solid #444; display: flex; justify-content: space-between; font-size: 13px; }
 
-/* Filtry a Odznaky sekcí */
+/* Filtry a odznaky sekcí (barvy bere z .sekce-*) */
 .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; }
 .filter-btn { padding: 6px 12px; border: 1px solid #555; font-size: 12px; background: transparent; color: #aaa; border-radius: 15px; }
 .filter-btn.active { color: white; font-weight: bold; border-color: white; }
+.filter-btn.active[class*="sekce-"] { background: var(--s-bg); color: var(--s-text); text-shadow: var(--s-stin); border-color: transparent; }
 
-.badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; margin-bottom: 10px; }
-.b-bio { background: linear-gradient(45deg, #ff4500, #ff8c00); }
-.b-geo { background: #00d2ff; color: black; }
-.b-chem { background: #ffdf00; color: black; }
-.b-ozp { background: linear-gradient(45deg, #8a2be2, #39ff14); text-shadow: 1px 1px 2px black; }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: var(--s-text, white); background: var(--s-bg, #444); text-shadow: var(--s-stin, none); margin-bottom: 10px; }
 
 /* Kandidáti Grid */
 .kand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-top: 20px; }
@@ -58,11 +67,14 @@ button:hover, a.btn:hover { background: #444; color: white; border-color: var(--
 .kand-box:hover { border-color: var(--cyan); }
 .kand-photo-placeholder { width: 80px; height: 80px; margin: 0 auto 10px; background: #333; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #666; border-radius: 5px; }
 
-.kand-box.expanded { grid-column: 1 / -1; display: flex; flex-direction: column; text-align: left; border-color: var(--yellow); cursor: default; }
+.kand-box.expanded { grid-column: 1 / -1; display: flex; flex-direction: column; text-align: left; border-color: var(--yellow); cursor: auto; }
 .kand-box.expanded .kand-header { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px; }
 .kand-box.expanded .kand-photo-placeholder { width: 120px; height: 120px; margin: 0; flex-shrink: 0; }
+.kand-box.expanded h3 { color: var(--cyan); text-align: left; }
 .kand-detail-content { display: none; }
 .kand-box.expanded .kand-detail-content { display: block; border-top: 1px solid #444; padding-top: 15px; }
+.kand-box.expanded .back-btn { margin: 20px 0 0 0; }
+.kand-box.expanded .back-btn:first-child { margin: 0 0 20px 0; }
 .qa-block { margin-bottom: 15px; }
 .qa-q { font-weight: bold; color: var(--cyan); margin-bottom: 5px; }
 .qa-a { font-size: 13px; color: #ccc; border-left: 2px solid #555; padding-left: 10px; }
