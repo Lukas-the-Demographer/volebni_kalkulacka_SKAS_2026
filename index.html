@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volební kalkulačka AS PřF UK</title>
-    <!-- ?v=3: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
-    <link rel="stylesheet" href="style.css?v=3">
-    <script src="data.js?v=3"></script>
+    <!-- ?v=4: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <link rel="stylesheet" href="style.css?v=4">
+    <script src="data.js?v=4"></script>
 </head>
 <body>
 
@@ -42,6 +42,8 @@
         let aktualniFiltr = 'Vse';
         const appDiv = document.getElementById('app');
         document.body.insertAdjacentHTML('afterbegin', testovaciBanner());
+        // Odkaz na kandidáty je stále dole v rohu (i během vyplňování), otevírá novou záložku
+        document.body.insertAdjacentHTML('beforeend', `<a class="plovouci-odkaz" href="kandidati.html" target="_blank">Profily kandidátů ↗</a>` + paticka());
 
         // Kolik oblastí má uživatel v každé úrovni: { 3: x, 2: y, 1: z }
         function spocitejPriority() {
@@ -134,7 +136,8 @@
                 return;
             }
 
-            vysledky = kandidati.map(kand => {
+            // Do kalkulačky jdou jen kandidáti s kompletně vyplněnými prioritami (5/5/5)
+            vysledky = kandidati.filter(maPlnePriority).map(kand => {
                 let maxBodu = 0, ziskaneBody = 0, detaily = [];
 
                 // Otázky Ano/Ne – "Nevím" uživatele se nepočítá
@@ -177,6 +180,10 @@
             let html = isFirstLoad ? `<div class="fade-in">` : `<div>`;
             html += `<h1>Vaše shoda s kandidáty</h1>` + filtrySekci(filtr, 'vykresliVysledky');
 
+            const vynechani = kandidati.filter(k => !maPlnePriority(k) && (filtr === 'Vse' || k.info.sekce === filtr));
+            if (vynechani.length > 0) {
+                html += `<div class="instruction-box">Kandidáti bez vyplněných priorit nejsou ve výsledcích zahrnuti: ${vynechani.map(k => k.jmeno).join(', ')}.</div>`;
+            }
             if (seznam.length === 0) html += `<p style="text-align:center;">V této sekci nejsou žádní kandidáti.</p>`;
 
             seznam.forEach(v => {

@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profily kandidátů AS PřF UK</title>
-    <!-- ?v=3: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
-    <link rel="stylesheet" href="style.css?v=3">
-    <script src="data.js?v=3"></script>
+    <!-- ?v=4: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <link rel="stylesheet" href="style.css?v=4">
+    <script src="data.js?v=4"></script>
 </head>
 <body>
 
@@ -17,6 +17,9 @@
         const rozbalId = new URLSearchParams(window.location.search).get('kandidat');
         const appDiv = document.getElementById('app');
         document.body.insertAdjacentHTML('afterbegin', testovaciBanner());
+        document.body.insertAdjacentHTML('beforeend', paticka());
+
+        const NAZVY_PRIORIT = { 3: 'Priorita', 2: 'Důležité', 1: 'Okrajové' };
 
         // Řazení: podle pořadí sekcí v data.js (Biologie → Geografie → Chemie → Geologie a OŽP),
         // uvnitř sekce v pořadí, v jakém jsou kandidáti zapsaní v data.js.
@@ -25,10 +28,8 @@
 
         window.vykresliKandidaty = function(filtr = 'Vse', isFirst = false) {
             let html = isFirst ? `<div class="fade-in">` : `<div>`;
+            html += `<a class="nav-box" href="index.html" target="_blank">← Volební kalkulačka ↗</a>`;
             html += `<h1>Profily kandidátů</h1>`;
-            if (rozbalId) {
-                html += `<p style="text-align:center; color:#888; font-size:12px;">(Zavřením této záložky se vrátíte do kalkulačky)</p>`;
-            }
             html += filtrySekci(filtr, 'vykresliKandidaty', true);
 
             const seznam = filtr === 'Vse' ? serazeni : serazeni.filter(k => k.info.sekce === filtr);
@@ -63,9 +64,10 @@
                 </div>`;
         }
 
-        // Rozbalená karta – na kliknutí nereaguje, zavírá se jen tlačítkem
+        // Rozbalená karta – všechno o kandidátovi; na kliknutí nereaguje, zavírá se jen tlačítkem
         function rozbalenaKarta(k) {
             const zpet = `<button class="submit-btn back-btn" onclick="zpetNaSeznam()">← Zpět na seznam kandidátů</button>`;
+            const kom = k.komentare || {};
             const radky = [`<strong>Obor:</strong> ${k.info.obor} (${k.info.rocnik})`];
             if (k.info.kontakt) radky.push(`<strong>Kontakt:</strong> <a href="mailto:${k.info.kontakt}" style="color:var(--cyan);">${k.info.kontakt}</a>`);
             if (k.info.odkaz) radky.push(`<strong>Program/CV:</strong> <a href="${k.info.odkaz}" target="_blank" style="color:var(--yellow);">Zobrazit web</a>`);
@@ -81,24 +83,40 @@
                             <div style="font-size: 13px; color: #aaa; line-height: 1.4;">${radky.join('<br>')}</div>
                         </div>
                     </div>
-                    <div class="kand-detail-content">
-                        <h4>Komentáře k anketě</h4>`;
+                    <div class="kand-detail-content">`;
 
-            const komentovane = otazky.concat(oblasti).filter(p => k.komentare && k.komentare[p.id]);
-            komentovane.forEach(p => html += qaBlok(p.text, k.komentare[p.id]));
-            if (komentovane.length === 0) html += `<div class="qa-a">Kandidát nevyplnil žádné doplňující komentáře.</div>`;
+            if (!maPlnePriority(k)) {
+                html += `<div class="instruction-box">Kandidát nevyplnil všechny priority, a proto není zahrnut ve výsledcích kalkulačky.</div>`;
+            }
 
+            // Levý sloupec: otázky Ano/Ne s odpovědí a případným zdůvodněním
+            html += `<div class="profil-grid"><div><h4>Otázky Ano/Ne</h4>`;
+            otazky.forEach(o => {
+                const v = k.odpovedi[o.id];
+                const odp = v === 1 ? `<span class="odp odp-ano">Ano</span>` : v === -1 ? `<span class="odp odp-ne">Ne</span>` : `<span class="odp">Neodpověděl/a</span>`;
+                html += `<div class="profil-polozka"><div class="qa-q">${o.text}</div>${odp}${kom[o.id] ? `<div class="qa-a">${kom[o.id]}</div>` : ''}</div>`;
+            });
+            html += `</div>`;
+
+            // Pravý sloupec: priority od nejvyšší, uvnitř úrovně podle abecedy
+            html += `<div><h4>Priority</h4>`;
+            const serazeneOblasti = oblasti
+                .map(o => ({ ...o, u: (k.priority || {})[o.id] || 0 }))
+                .sort((a, b) => b.u - a.u || a.text.localeCompare(b.text, 'cs'));
+            serazeneOblasti.forEach(o => {
+                const stitek = o.u ? NAZVY_PRIORIT[o.u] : 'Nevyplněno';
+                html += `<div class="profil-polozka prio-${o.u}"><div class="prio-hlava"><span class="prio-stitek">${stitek}</span>${o.text}</div>${kom[o.id] ? `<div class="qa-a">${kom[o.id]}</div>` : ''}</div>`;
+            });
+            html += `</div></div>`;
+
+            // Pod tím: nepříjemné otázky
             html += `<h4>Nepříjemné otázky na tělo</h4>`;
             if (TESTOVACI_DATA) html += `<div class="qa-poznamka">(Testovací odpovědi – vymyšlené, ne skutečné výroky kandidáta.)</div>`;
             const zodpovezene = neprijemneOtazky.filter(n => k.neprijemne && k.neprijemne[n.id]);
-            zodpovezene.forEach(n => html += qaBlok(n.text, k.neprijemne[n.id]));
+            zodpovezene.forEach(n => html += `<div class="qa-block"><div class="qa-q">${n.text}</div><div class="qa-a">${k.neprijemne[n.id]}</div></div>`);
             if (zodpovezene.length === 0) html += `<div class="qa-a">Žádné odpovědi v této sekci.</div>`;
 
             return html + `</div>${zpet}</div>`;
-        }
-
-        function qaBlok(otazka, odpoved) {
-            return `<div class="qa-block"><div class="qa-q">${otazka}</div><div class="qa-a">${odpoved}</div></div>`;
         }
 
         window.otevriKandidata = id => window.location.href = 'kandidati.html?kandidat=' + id;

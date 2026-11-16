@@ -71,8 +71,28 @@ const oblasti = [
     { id: 'o9',  text: 'Koleje a menzy' },
     { id: 'o10', text: 'Udržitelnost a ekologie provozu fakulty' },
     { id: 'o11', text: 'Digitalizace agendy a studijních systémů' },
-    { id: 'o12', text: 'Studentský výzkum, stáže a doktorandi' }
+    { id: 'o12', text: 'Studentský výzkum, stáže a doktorandi' },
+    { id: 'o13', text: 'Sport a volnočasové aktivity' },
+    { id: 'o14', text: 'Výuka cizích jazyků a programy v angličtině' },
+    { id: 'o15', text: 'Biocentrum Albertov a rozvoj budov' }
 ];
+// 15 oblastí × 3 úrovně × limit 5 → kandidát musí mít přesně 5× Priorita, 5× Důležité, 5× Okrajové.
+
+// Kandidát je v kalkulačce jen tehdy, když ohodnotil VŠECHNY oblasti a nepřekročil limit v žádné úrovni.
+function maPlnePriority(k) {
+    const p = k.priority || {};
+    if (!oblasti.every(o => [1, 2, 3].includes(p[o.id]))) return false;
+    return [1, 2, 3].every(u => oblasti.filter(o => p[o.id] === u).length <= limitPriorit);
+}
+
+// Zápatí obou stránek
+function paticka() {
+    return `<footer class="paticka">
+        Vytvořeno pro účely voleb do Studentské komory Akademického senátu PřF UK (SKAS) v roce 2026.
+        Za obsah odpovídají samotní kandidáti, kteří veškeré údaje poskytli, nebo jsou součástí jejich veřejných kandidatur.
+        ${TESTOVACI_DATA ? '<br><strong>Testovací verze: odpovědi a priority kandidátů jsou odhadnuté.</strong>' : ''}
+    </footer>`;
+}
 
 // --- NEPŘÍJEMNÉ OTÁZKY (stejné pro všechny) ---
 const neprijemneOtazky = [
@@ -85,6 +105,13 @@ const neprijemneOtazky = [
 // Odpovědi na otázky jako pole v pořadí q1..q13 (1 = Ano, -1 = Ne)
 const odp = pole => Object.fromEntries(pole.map((v, i) => ['q' + (i + 1), v]));
 
+// Priority zapsané po úrovních: prio('o1 o3 …' = Priorita, '…' = Důležité, '…' = Okrajové)
+const prio = (tri, dve, jedna) => {
+    const p = {};
+    [[tri, 3], [dve, 2], [jedna, 1]].forEach(([seznam, u]) => seznam.split(' ').filter(Boolean).forEach(id => p[id] = u));
+    return p;
+};
+
 // --- KANDIDÁTI (pořadí uvnitř sekce = pořadí na stránce kandidátů) ---
 const kandidati = [
     // ===== BIOLOGIE =====
@@ -92,7 +119,7 @@ const kandidati = [
         id: 'strakova', jmeno: 'Lucie Straková', foto: 'foto/strakova.jpg',
         info: { sekce: 'Biologie', obor: 'Reprodukční a vývojová biologie', rocnik: '1. nMgr.', kontakt: '', odkaz: '' },
         odpovedi: odp([-1, 1, -1, 1, 1, -1, 1, 1, 1, 1, 1, -1, 1]),
-        priority: { o1: 3, o3: 3, o8: 3, o4: 2, o6: 2, o5: 1 },
+        priority: prio('o1 o3 o8 o14 o4', 'o6 o5 o2 o13 o7', 'o9 o10 o11 o12 o15'),
         komentare: {
             o1: 'Chce podporovat spolky, aktivní studenty a kulturní život na fakultě a víc propojit biologickou sekci.',
             o3: 'Chce víc propagovat fakultního psychologa a lékaře, aby se studenti nebáli říct si o pomoc.',
@@ -109,11 +136,14 @@ const kandidati = [
         id: 'polak', jmeno: 'Arnošt Polák', foto: 'foto/polak.jpg',
         info: { sekce: 'Biologie', obor: 'Bioinformatika', rocnik: '3. Bc.', kontakt: 'arnost.polak@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([-1, -1, -1, 1, 1, -1, -1, 1, 1, -1, -1, -1, 1]),
-        priority: { o1: 3, o2: 3, o12: 3, o7: 2, o5: 2, o9: 1 },
+        priority: prio('o1 o2 o12 o15 o14', 'o7 o5 o9 o4 o11', 'o3 o6 o8 o10 o13'),
         komentare: {
+            q2: 'Akce mají dělat spolky, SKAS je má hlavně podporovat a nesuplovat je.',
+            q3: 'Kontrola ano, ale nesmí z ní být byrokracie, která spolky udusí.',
             o1: 'Chce udržet a co nejvíc navýšit podporu spolků a dát jim větší prostor v propagaci fakulty.',
             o2: 'Navrhuje zmapovat poptávku po studijních prostorech, dát do chodeb stoly se zásuvkami a prodloužit otevírací dobu knihoven.',
-            o12: 'Vidí v Biocentru šanci pro špičkovou vědu a chce nové mezioborové programy, ideálně v angličtině.'
+            o15: 'Vidí v Biocentru šanci pro špičkovou vědu; v ekonomické komisi AS UK hájil financování stavby.',
+            o14: 'Chce nové mezioborové programy, ideálně v angličtině pro nejlepší studenty ze světa.'
         },
         neprijemne: {
             n1: 'V senátu už jedno období jsem, takže vím, kolik času to zabere. Mám to zahrnuté v plánu.',
@@ -126,7 +156,7 @@ const kandidati = [
         id: 'lis', jmeno: 'Jonáš Lis', foto: 'foto/lis.jpg',
         info: { sekce: 'Biologie', obor: 'Botanika', rocnik: '1. nMgr.', kontakt: '', odkaz: '' },
         odpovedi: odp([-1, -1, 1, 1, -1, 1, -1, -1, -1, -1, -1, -1, -1]),
-        priority: { o4: 3, o8: 2, o1: 1 },
+        priority: prio('o4 o8 o1 o6 o3', 'o2 o12 o5 o9 o10', 'o7 o11 o13 o14 o15'),
         komentare: {
             o4: 'Hlavní téma: SKAS a volby do něj jsou důležité, potřebujeme vyšší účast a víc kandidátů.'
         },
@@ -141,8 +171,9 @@ const kandidati = [
         id: 'kubu', jmeno: 'Martin Kubů', foto: 'foto/kubu.jpg',
         info: { sekce: 'Biologie', obor: 'Molekulární a buněčná biologie, genetika a virologie', rocnik: '3. Ph.D.', kontakt: '', odkaz: '' },
         odpovedi: odp([1, 1, -1, 1, 1, -1, 1, 1, 1, 1, 1, 1, -1]),
-        priority: { o3: 3, o7: 3, o1: 2, o12: 2, o4: 1 },
+        priority: prio('o3 o7 o14 o12 o1', 'o4 o8 o2 o6 o5', 'o9 o10 o11 o13 o15'),
         komentare: {
+            q1: 'U témat, která přímo dopadají na studenty a vědu, by SKAS mlčet neměl.',
             o3: 'Nevhodné chování vyučujících a školitelů je podle něj nepřijatelné, chce otevřít diskusi, aby se lidé nebáli to nahlásit.',
             o7: 'Chce rovné příležitosti pro zahraniční studenty, kterým jazyková bariéra brání zapojit se.'
         },
@@ -157,7 +188,7 @@ const kandidati = [
         id: 'belza', jmeno: 'Václav Cedrik Belza', foto: 'foto/belza.jpg',
         info: { sekce: 'Biologie', obor: 'Botanika', rocnik: '1. nMgr.', kontakt: '', odkaz: '' },
         odpovedi: odp([-1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, -1]),
-        priority: { o4: 3, o8: 3, o12: 3, o6: 2, o11: 1 },
+        priority: prio('o4 o8 o12 o6 o11', 'o1 o3 o2 o14 o5', 'o7 o9 o10 o13 o15'),
         komentare: {
             o4: 'Chce jasnou komunikaci a domluvu mezi studentskou a zaměstnaneckou částí senátu.',
             o8: 'Navrhuje sjednotit náročnost předmětů se stejným počtem kreditů a rozšířit hodnocení předmětů.',
@@ -174,7 +205,7 @@ const kandidati = [
         id: 'byronova', jmeno: 'Markéta Byronová', foto: 'foto/byronova.jpg',
         info: { sekce: 'Biologie', obor: 'Zoologie', rocnik: '1. Ph.D.', kontakt: 'byronovm@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([-1, 1, 1, 1, 1, -1, -1, -1, 1, -1, 1, 1, -1]),
-        priority: { o5: 3, o4: 3, o6: 2, o1: 2, o8: 1 },
+        priority: prio('o5 o4 o6 o1 o8', 'o12 o3 o10 o2 o7', 'o9 o11 o13 o14 o15'),
         komentare: {
             o4: 'Chce dál zmenšovat propast mezi studenty a vedením a usilovat o otevřenost a transparentnost.',
             o5: 'Chce intenzivnější komunikaci se středními školami a veřejností a podporu celofakultních akcí.'
@@ -190,7 +221,7 @@ const kandidati = [
         id: 'dix', jmeno: 'Anaïs Ariadne Dix', foto: 'foto/dix.jpg',
         info: { sekce: 'Biologie', obor: 'Ekologie (Hydrobiologie)', rocnik: '1. nMgr.', kontakt: '', odkaz: '' },
         odpovedi: odp([1, 1, -1, 1, -1, -1, 1, 1, 1, -1, 1, -1, -1]),
-        priority: { o6: 3, o5: 3, o12: 2, o4: 1 },
+        priority: prio('o6 o5 o12 o4 o10', 'o3 o1 o7 o8 o13', 'o2 o9 o11 o14 o15'),
         komentare: {
             o6: 'Chce lépe propagovat existující mentoring pro studenty nižších ročníků.',
             o12: 'Navrhuje platformu pro sdílení zkušeností s bakalářskými a diplomovými pracemi.'
@@ -206,7 +237,7 @@ const kandidati = [
         id: 'fiedler', jmeno: 'Jan Fiedler', foto: 'foto/fiedler.jpg',
         info: { sekce: 'Biologie', obor: 'Protistologie', rocnik: '2. nMgr.', kontakt: '', odkaz: '' },
         odpovedi: odp([1, 1, -1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1]),
-        priority: { o4: 3, o1: 2, o8: 2, o2: 1 },
+        priority: prio('o4 o1 o8 o2 o3', 'o12 o6 o5 o13 o10', 'o7 o9 o11 o14 o15'),
         komentare: {
             o4: 'Chce otevřenou platformu pro sdílení nápadů a podnětů celé akademické obce.',
             o1: 'Plánuje pravidelná setkání a workshopy, které posílí komunitu napříč obory.'
@@ -222,7 +253,7 @@ const kandidati = [
         id: 'karban', jmeno: 'Šimon Karban', foto: 'foto/karban.jpg',
         info: { sekce: 'Biologie', obor: 'Genetika, molekulární biologie a virologie', rocnik: '2. nMgr.', kontakt: 'karbansim@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([1, -1, -1, 1, 1, -1, 1, 1, 1, -1, -1, -1, -1]),
-        priority: { o7: 3, o1: 3, o5: 2, o6: 1 },
+        priority: prio('o7 o1 o5 o14 o6', 'o4 o12 o8 o3 o11', 'o2 o9 o10 o13 o15'),
         komentare: {
             o7: 'Chce systém výběru na Erasmus+, který nenechá studenty čekat do konce semestru, a víc propagovat možnosti aliance 4EU+.',
             o1: 'Spolky jsou podle něj srdcem fakulty a měly by být součástí propagace (veletrhy, DOD, soustředění).'
@@ -238,8 +269,9 @@ const kandidati = [
         id: 'kivader', jmeno: 'Martin Kivader', foto: 'foto/kivader.jpg',
         info: { sekce: 'Biologie', obor: 'Botanika', rocnik: '1. nMgr.', kontakt: '', odkaz: '' },
         odpovedi: odp([-1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, 1]),
-        priority: { o4: 3, o8: 2, o1: 2, o2: 1 },
+        priority: prio('o4 o8 o1 o2 o13', 'o3 o6 o5 o11 o10', 'o7 o9 o12 o14 o15'),
         komentare: {
+            q6: 'Senát je kontrolní orgán. Kooperace ano, ale kontrola je jeho hlavní úkol.',
             o4: 'Chce konzultovat studijní záležitosti přímo se studenty ve studentském klubu.',
             o8: 'Chce dohlížet na činnost studijní a legislativní komise i nového kolegia děkana.'
         },
@@ -254,7 +286,7 @@ const kandidati = [
         id: 'spicka', jmeno: 'Jan Špička', foto: 'foto/spicka.jpg',
         info: { sekce: 'Biologie', obor: 'Botanika', rocnik: '1. nMgr.', kontakt: 'spickajan@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([-1, 1, 1, 1, 1, -1, 1, 1, 1, -1, 1, 1, -1]),
-        priority: { o12: 3, o3: 3, o4: 3, o11: 2, o5: 2, o2: 1 },
+        priority: prio('o12 o3 o4 o11 o5', 'o2 o1 o8 o7 o10', 'o6 o9 o13 o14 o15'),
         komentare: {
             o12: 'Chce víc peněz pro studentské projekty už v magisterském studiu, víc stáží a jejich kreditové ohodnocení.',
             o3: 'Klade důraz na dostupné psychologické poradenství a relaxační prostory.',
@@ -273,7 +305,7 @@ const kandidati = [
         id: 'kahoun', jmeno: 'Lukáš Kahoun', foto: 'foto/kahoun.jpg',
         info: { sekce: 'Geografie', obor: 'Demografie', rocnik: '2. Ph.D.', kontakt: 'kahounl@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([-1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, 1, 1]),
-        priority: { o1: 3, o2: 3, o12: 2, o4: 2, o11: 1 },
+        priority: prio('o1 o2 o12 o4 o13', 'o11 o3 o8 o6 o9', 'o5 o7 o10 o14 o15'),
         komentare: {
             o1: 'Chce udržet podporu spolků, pořádat Přírodovědce sobě a zprůhlednit pravidla využívání fakultních prostor.',
             o2: 'Řeší drobnosti: víc míst k sezení, mikrovlnku na Albertově 6, bezbariérový přístup do Z3.',
@@ -290,9 +322,10 @@ const kandidati = [
         id: 'kucera', jmeno: 'Ondřej Kučera', foto: 'foto/kucera.jpg',
         info: { sekce: 'Geografie', obor: 'Sociální geografie a regionální rozvoj', rocnik: '1. nMgr.', kontakt: 'kuceraondrej3@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([-1, 1, -1, 1, 1, -1, 1, 1, 1, -1, -1, -1, 1]),
-        priority: { o4: 3, o1: 3, o8: 2, o7: 1 },
+        priority: prio('o4 o1 o14 o8 o7', 'o6 o5 o13 o3 o2', 'o9 o10 o11 o12 o15'),
         komentare: {
-            o8: 'Výuka jazyků je podle něj silně podhodnocená – akademická angličtina by měla být součástí všech oborů.',
+            q7: 'Ano, ale tak, aby se tím nezvýšila celková náročnost studia.',
+            o14: 'Výuka jazyků je podle něj silně podhodnocená – akademická angličtina by měla být součástí všech oborů.',
             o1: 'Chce jednodušší financování stávajících spolků a podporu vzniku nových.',
             o4: 'Chce komunikaci oběma směry: nápady studentů do senátu, informace ze senátu ke studentům.'
         },
@@ -307,8 +340,10 @@ const kandidati = [
         id: 'tadlik', jmeno: 'Ondřej Tadlík', foto: 'foto/tadlik.jpg',
         info: { sekce: 'Geografie', obor: 'Geografie a kartografie', rocnik: '2. Bc.', kontakt: '', odkaz: '' },
         odpovedi: odp([1, -1, -1, -1, -1, 1, -1, -1, 1, 1, 1, 1, -1]),
-        priority: { o10: 3, o9: 3, o3: 3, o8: 2, o1: 1 },
+        priority: prio('o10 o9 o3 o8 o1', 'o15 o2 o4 o12 o7', 'o5 o6 o11 o13 o14'),
         komentare: {
+            q1: 'Vývoj české demokracie je nejistý a akademická obec se musí umět ozvat.',
+            q11: 'Klimatická hnutí jsou přirozený partner přírodovědecké fakulty.',
             o10: 'Chce snížit energetickou náročnost budov a spolupracovat se spolky a klimatickými hnutími.',
             o9: 'Chce vyšší rozpočet UK na rekonstrukci kolejí.',
             o8: 'Navrhuje revizi studijního a zkušebního řádu s ohledem na kreditovou váhu předmětů.'
@@ -324,7 +359,7 @@ const kandidati = [
         id: 'gregor', jmeno: 'Baldo Gregor', foto: 'foto/gregor.jpg',
         info: { sekce: 'Geografie', obor: 'Geografie a kartografie', rocnik: '2.', kontakt: '', odkaz: '' },
         odpovedi: odp([-1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, -1, 1]),
-        priority: { o12: 3, o10: 3, o11: 2, o3: 2, o5: 2 },
+        priority: prio('o12 o10 o11 o3 o5', 'o15 o13 o7 o2 o1', 'o4 o6 o8 o9 o14'),
         komentare: {
             o12: 'Program ve verších: laboratoře na světové úrovni a spolupráce s praxí, stáže a výzkum pro všechny.',
             o10: 'Zelený kampus, méně odpadu, ekologické projekty.',
@@ -343,7 +378,7 @@ const kandidati = [
         id: 'galova', jmeno: 'Karolína Gálová', foto: 'foto/galova.jpg',
         info: { sekce: 'Chemie', obor: 'Učitelství chemie pro SŠ', rocnik: '2. nMgr.', kontakt: '', odkaz: '' },
         odpovedi: odp([-1, 1, 1, 1, 1, -1, -1, -1, 1, -1, -1, 1, -1]),
-        priority: { o5: 3, o6: 3, o1: 2, o4: 1 },
+        priority: prio('o5 o6 o1 o4 o8', 'o12 o3 o2 o14 o11', 'o7 o9 o10 o13 o15'),
         komentare: {
             o5: 'Chce dát studentům zázemí a know-how pro popularizaci vědy a víc zapojit fakultu do Noci vědců a veletrhů.',
             o6: 'Navrhuje akce pro prváky – seznámení, praktické rady ke studiu i rozpočtu.'
@@ -359,7 +394,7 @@ const kandidati = [
         id: 'willimetz', jmeno: 'Robert Willimetz', foto: 'foto/willimetz.jpg',
         info: { sekce: 'Chemie', obor: 'Anorganická chemie', rocnik: '3. Ph.D.', kontakt: 'robert.willimetz@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([-1, -1, 1, 1, 1, -1, -1, 1, 1, -1, -1, 1, -1]),
-        priority: { o2: 3, o1: 3, o5: 2, o3: 2, o11: 2, o6: 1 },
+        priority: prio('o2 o1 o15 o5 o3', 'o11 o6 o8 o12 o10', 'o4 o7 o9 o13 o14'),
         komentare: {
             o2: 'Chce aktivně plánovat studentské prostory v Biocentru, zrekonstruovat klub Chladič a rozšířit knihovnu.',
             o1: 'Pro spolky víc peněz, víc propagace a hlavně prostory – Loděnice, Plavecká.',
@@ -376,7 +411,7 @@ const kandidati = [
         id: 'liska', jmeno: 'Vojtěch Liška', foto: 'foto/liska.jpg',
         info: { sekce: 'Chemie', obor: 'Anorganická chemie', rocnik: '3. Ph.D.', kontakt: '', odkaz: '' },
         odpovedi: odp([-1, -1, -1, 1, -1, -1, 1, 1, 1, 1, -1, 1, -1]),
-        priority: { o11: 3, o8: 3, o3: 3, o1: 2, o4: 2 },
+        priority: prio('o11 o8 o3 o1 o4', 'o12 o5 o6 o2 o14', 'o7 o9 o10 o13 o15'),
         komentare: {
             o11: 'Chce kvalitní online materiály a víc využívat Moodle.',
             o8: 'Chce lépe využívat anketu, aby studenti věděli, do čeho při výběru předmětů jdou.',
@@ -393,8 +428,9 @@ const kandidati = [
         id: 'janacek', jmeno: 'Matyáš Janáček', foto: 'foto/janacek.jpg',
         info: { sekce: 'Chemie', obor: 'Medicinální chemie', rocnik: '1. Bc.', kontakt: 'janacekma@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([1, 1, -1, -1, -1, 1, -1, 1, -1, -1, -1, -1, 1]),
-        priority: { o2: 3, o11: 3, o6: 2, o1: 1 },
+        priority: prio('o2 o11 o6 o1 o8', 'o4 o9 o14 o13 o5', 'o3 o7 o10 o12 o15'),
         komentare: {
+            q8: 'Jeden vyučující používá Google Classroom, druhý Moodle, třetí obojí – to je zbytečný chaos.',
             o11: 'Chce sjednotit e-learning na jednu platformu a zjednodušit přístup do SIS a CAS (jeden účet, jedno heslo).',
             o2: 'Chce úložné skříňky a šatny pro studenty a delší otevírací dobu knihoven a studoven.'
         },
@@ -411,11 +447,13 @@ const kandidati = [
         id: 'koutnik', jmeno: 'Jakub Koutník', foto: 'foto/koutnik.jpg',
         info: { sekce: 'Geologie a OŽP', obor: 'Aplikovaná geologie / hydrogeologie', rocnik: '2. nMgr.', kontakt: 'koutnikjak@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([-1, 1, -1, 1, 1, -1, -1, -1, -1, -1, -1, -1, 1]),
-        priority: { o5: 3, o6: 3, o1: 3, o2: 1 },
+        priority: prio('o5 o6 o1 o13 o2', 'o4 o9 o3 o12 o8', 'o7 o10 o11 o14 o15'),
         komentare: {
             o5: 'Chce dlouhodobou strategii propagace a náboru na sociálních sítích a efektivnější propagaci geologie na SŠ.',
             o6: 'Chce snížit počet studentů, kteří končí v prvním ročníku kvůli maličkostem.',
-            o1: 'Chce cílenější podporu sportovních oddílů a rozjet tým FC Přírodověda.'
+            q13: 'Sport drží komunitu pohromadě a fakultu dobře reprezentuje.',
+            o13: 'Chce cílenější podporu sportovních oddílů a rozjet tým FC Přírodověda.',
+            o1: 'Chce podporovat spolkovou činnost – sám organizuje akce pro stovky lidí.'
         },
         neprijemne: {
             n1: 'Sport mě naučil zvládat víc věcí najednou. Ubrat budu muset z organizace některých akcí.',
@@ -428,7 +466,7 @@ const kandidati = [
         id: 'kriz', jmeno: 'Ondřej Kříž', foto: 'foto/kriz.jpg',
         info: { sekce: 'Geologie a OŽP', obor: 'Geologie', rocnik: '1. Bc.', kontakt: 'krizondrej1@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, -1]),
-        priority: { o6: 3, o4: 3, o1: 2, o8: 1 },
+        priority: prio('o6 o4 o1 o8 o14', 'o7 o3 o11 o2 o5', 'o9 o10 o12 o13 o15'),
         komentare: {
             o6: 'Chce zjednodušit přechod na VŠ: doplnit příručku prváka, další přednášky a nové formáty předávání informací.',
             o4: 'Chce naslouchat studentům všech ročníků a přinést do SKAS pohled nováčků.'
@@ -444,7 +482,7 @@ const kandidati = [
         id: 'sulc', jmeno: 'Jan Šulc', foto: 'foto/sulc.jpg',
         info: { sekce: 'Geologie a OŽP', obor: 'Geologie', rocnik: '3. Ph.D.', kontakt: '', odkaz: '' },
         odpovedi: odp([-1, -1, 1, 1, 1, -1, 1, -1, 1, 1, 1, 1, -1]),
-        priority: { o7: 3, o3: 3, o9: 3, o10: 2, o1: 2, o2: 2 },
+        priority: prio('o7 o3 o9 o15 o10', 'o1 o2 o12 o14 o4', 'o5 o6 o8 o11 o13'),
         komentare: {
             o7: 'Chce víc zapojit studenty do evropských výzkumných programů a mobilit.',
             o3: 'Fakulta má být bezpečné místo – ochrana před šikanou a diskriminací.',
@@ -461,7 +499,7 @@ const kandidati = [
         id: 'pernicky', jmeno: 'Patrik Pernický', foto: 'foto/pernicky.jpg',
         info: { sekce: 'Geologie a OŽP', obor: 'Geologie', rocnik: '1. Bc.', kontakt: 'patrik.pernicky@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([-1, 1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, 1]),
-        priority: { o12: 3, o1: 3, o9: 2, o2: 1 },
+        priority: prio('o12 o1 o9 o2 o13', 'o5 o6 o8 o10 o15', 'o3 o4 o7 o11 o14'),
         komentare: {
             o12: 'Chce větší podporu vědy a výzkumu.',
             o1: 'Podpora studentských spolků, klubů a akcí.'
@@ -477,8 +515,9 @@ const kandidati = [
         id: 'slacalova', jmeno: 'Veronika Sláčalová', foto: 'foto/slacalova.jpg',
         info: { sekce: 'Geologie a OŽP', obor: 'Ochrana životního prostředí', rocnik: '3. Bc.', kontakt: 'slacalov@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([1, 1, 1, 1, -1, -1, 1, -1, 1, 1, 1, -1, -1]),
-        priority: { o1: 3, o2: 3, o10: 3, o7: 2, o8: 2, o5: 1, o6: 1 },
+        priority: prio('o1 o2 o10 o8 o7', 'o5 o6 o14 o3 o4', 'o9 o11 o12 o13 o15'),
         komentare: {
+            q10: 'Etický kodex by se měl znovu otevřít a projednat se studenty.',
             o2: 'Chce víc míst pro samostudium a setkávání.',
             o10: 'V budově ÚŽP chce víc nádob na tříděný odpad včetně bioodpadu.',
             o8: 'Chce motivovat studenty k vyplňování ankety a brát jejich připomínky vážně; víc terénní výuky.'
@@ -494,9 +533,10 @@ const kandidati = [
         id: 'juha', jmeno: 'Ondřej Juha', foto: 'foto/juha.jpg',
         info: { sekce: 'Geologie a OŽP', obor: 'Hydrologie a hydrogeologie', rocnik: '3. nMgr.', kontakt: 'ondrej.juha@natur.cuni.cz', odkaz: '' },
         odpovedi: odp([1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1]),
-        priority: { o6: 3, o1: 3, o3: 2, o8: 2, o12: 2, o7: 2, o2: 1 },
+        priority: prio('o6 o1 o3 o8 o12', 'o7 o2 o4 o5 o13', 'o9 o10 o11 o14 o15'),
         komentare: {
             o6: 'Chce dál zlepšovat Úvodní soustředění a pomáhat studentům jako tutor.',
+            q12: 'Doktorandské stipendium je dlouhodobě nízké, ale ostatním studentům by se brát nemělo.',
             o12: 'Chce hájit studenty u novely VŠ zákona a zvýšit doktorandské stipendium i pro ty, kdo nastoupili dřív.',
             o8: 'Studentská anketa by se měla víc promítat do stylu výuky; víc praktických předmětů a terénu.'
         },
