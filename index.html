@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volební kalkulačka AS PřF UK</title>
-    <!-- ?v=4: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
-    <link rel="stylesheet" href="style.css?v=4">
-    <script src="data.js?v=4"></script>
+    <!-- ?v=5: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <link rel="stylesheet" href="style.css?v=5">
+    <script src="data.js?v=5"></script>
 </head>
 <body>
 
@@ -41,7 +41,6 @@
         let vysledky = [];
         let aktualniFiltr = 'Vse';
         const appDiv = document.getElementById('app');
-        document.body.insertAdjacentHTML('afterbegin', testovaciBanner());
         // Odkaz na kandidáty je stále dole v rohu (i během vyplňování), otevírá novou záložku
         document.body.insertAdjacentHTML('beforeend', `<a class="plovouci-odkaz" href="kandidati.html" target="_blank">Profily kandidátů ↗</a>` + paticka());
 

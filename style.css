@@ -16,14 +16,12 @@ h4 { color: var(--magenta); text-align: left; margin-top: 20px; border-bottom: 1
    --s-pruh   levý pruh karty ve výsledcích (shora dolů)
    --s-text   barva textu na pozadí --s-bg
    --s-stin   stín textu (kvůli čitelnosti na přechodu)
-   Geologie a OŽP je spojená sekce: geologie = fialová, OŽP = zelená → přechod. */
+   Geologie a ÚŽP je spojená sekce: geologie = fialová, ÚŽP = zelená → přechod. */
 .sekce-bio  { --s-bg: linear-gradient(45deg, #ff4500, #ff8c00); --s-pruh: linear-gradient(#ff4500, #ff8c00); --s-text: white; --s-stin: none; }
 .sekce-geo  { --s-bg: #00d2ff;                                  --s-pruh: linear-gradient(#00d2ff, #00d2ff); --s-text: black; --s-stin: none; }
 .sekce-chem { --s-bg: #ffdf00;                                  --s-pruh: linear-gradient(#ffdf00, #ffdf00); --s-text: black; --s-stin: none; }
-.sekce-ozp  { --s-bg: linear-gradient(45deg, #8a2be2, #39ff14); --s-pruh: linear-gradient(#8a2be2, #39ff14); --s-text: white; --s-stin: 1px 1px 2px black; }
+.sekce-uzp  { --s-bg: linear-gradient(45deg, #8a2be2, #39ff14); --s-pruh: linear-gradient(#8a2be2, #39ff14); --s-text: white; --s-stin: 1px 1px 2px black; }
 
-/* Upozornění na testovací data */
-.test-banner { max-width: 750px; margin: 0 auto 10px; padding: 8px 15px; background: #3a2a00; border: 1px dashed var(--yellow); color: var(--yellow); font-size: 12px; text-align: center; box-sizing: border-box; }
 
 /* Instrukce / Tooltip boxy */
 .instruction-box { background: #333; border-left: 4px solid var(--cyan); padding: 10px 15px; font-size: 12.5px; color: #bbb; margin-bottom: 20px; }
@@ -129,3 +127,9 @@ button:hover, a.btn:hover { background: #444; color: white; border-color: var(--
 .menu-square:hover { background: var(--cyan); color: black; transform: scale(1.05); }
 .menu-square.alt { border-color: var(--magenta); }
 .menu-square.alt:hover { background: var(--magenta); color: black; }
+
+/* Sbalená karta kandidáta: jméno, obor, ročník, odkaz */
+.karta-jmeno { margin: 5px 0 4px; font-size: 15px; }
+.karta-radek { font-size: 11.5px; color: #999; line-height: 1.4; min-height: 16px; }
+.karta-radek a { color: var(--yellow); text-decoration: none; }
+.karta-radek a:hover { text-decoration: underline; }
