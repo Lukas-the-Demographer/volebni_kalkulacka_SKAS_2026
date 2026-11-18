@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volební kalkulačka AS PřF UK</title>
+    <!-- ?v=6: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <link rel="stylesheet" href="style.css?v=6">
+    <script src="data.js?v=6"></script>
+</head>
+<body>
+
+<div class="container" id="app"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // Rachejtle při kliknutí
+        document.addEventListener('click', function(e) {
+            const colors = ['#00d2ff', '#ff007f', '#ffdf00', '#39ff14'];
+            for (let i = 0; i < 10; i++) {
+                let spark = document.createElement('div');
+                spark.className = 'spark';
+                spark.style.left = e.clientX + 'px';
+                spark.style.top = e.clientY + 'px';
+                spark.style.background = colors[Math.floor(Math.random() * colors.length)];
+                let angle = (i / 10) * Math.PI * 2;
+                let velocity = 30 + Math.random() * 40;
+                spark.style.setProperty('--dx', Math.cos(angle) * velocity + 'px');
+                spark.style.setProperty('--dy', Math.sin(angle) * velocity + 'px');
+                document.body.appendChild(spark);
+                setTimeout(() => spark.remove(), 600);
+            }
+        });
+
+        const NAZVY_PRIORIT = { 3: 'Priorita', 2: 'Důležité', 1: 'Okrajové', 0: 'Nezaškrtnuto' };
+        const TRIDY_PRIORIT = { 3: 'btn-prio', 2: 'btn-mid', 1: 'btn-low' };
+
+        let uzivOdpovedi = {};
+        let uzivPriority = {};
+        let vysledky = [];
+        let aktualniFiltr = 'Vse';
+        const appDiv = document.getElementById('app');
+        // Odkaz na kandidáty je stále dole v rohu (i během vyplňování), otevírá novou záložku
+        document.body.insertAdjacentHTML('beforeend', `<a class="plovouci-odkaz" href="kandidati.html" target="_blank">Profily kandidátů ↗</a>` + paticka());
+
+        // Kolik oblastí má uživatel v každé úrovni: { 3: x, 2: y, 1: z }
+        function spocitejPriority() {
+            const p = { 3: 0, 2: 0, 1: 0 };
+            Object.values(uzivPriority).forEach(v => p[v]++);
+            return p;
+        }
+        const jeLimitPrekrocen = p => [3, 2, 1].some(u => p[u] > limitPriorit);
+
+        window.odpovezOtazku = function(id, val) { uzivOdpovedi[id] = val; vykresliFormular(); };
+        window.odpovezPrioritu = function(id, val) {
+            // Opětovné kliknutí na vybranou prioritu ji zruší
+            if (uzivPriority[id] === val) delete uzivPriority[id];
+            else uzivPriority[id] = val;
+            vykresliFormular();
+        };
+
+        window.vykresliFormular = function(isFirstLoad = false) {
+            const pocty = spocitejPriority();
+
+            // fade-in jen při prvním načtení, aby formulář při klikání neproblikával
+            let html = isFirstLoad ? `<div class="fade-in">` : `<div>`;
+            html += `<h1>Volební kalkulačka</h1>
+                     <h2>1. Otázky a opatření</h2>
+                     <div class="instruction-box">
+                        <strong>Nezávislá studentská iniciativa, nikoli oficiální nástroj SKAS ani ASF.</strong> <a href="o-kalkulacce.html" target="_blank" style="color:var(--cyan);">Jak kalkulačka vznikla ↗</a>
+                     </div>
+                     <div class="instruction-box">
+                        <strong>Návod:</strong> Vyberte Ano/Ne. Pokud vyberete "Nevím", otázka se do vašeho výsledku <strong>vůbec nezapočítá</strong> a nijak vás nepoškodí. Naopak kandidáti, kteří nedokáží zaujmout názor u tématu, na kterém vám záleží, body ztrácí.
+                     </div>`;
+
+            otazky.forEach(o => {
+                const z = uzivOdpovedi[o.id];
+                html += `
+                    <div class="card">
+                        <p>${o.text}</p>
+                        <div class="options">
+                            <button class="btn-ano ${z === 1 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', 1)">Ano</button>
+                            <button class="btn-ne ${z === -1 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', -1)">Ne</button>
+                            <button class="btn-nevim ${z === 0 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', 0)">Nevím / Nezajímá mě</button>
+                        </div>
+                    </div>`;
+            });
+
+            html += `<h2>2. Téma a priority</h2>
+                     <div class="instruction-box">
+                        <strong>Návod:</strong> Vyberte <strong>maximálně ${limitPriorit}</strong> témat v každé kategorii. <strong>Není nutné vybrat vše</strong>. Oblasti, které neoznačíte, kalkulačka vynechá. Znovu-kliknutím na tlačítko prioritu zrušíte.
+                     </div>
+                     <div class="counter-box">`
+                   + [3, 2, 1].map(u => `<span class="counter ${pocty[u] <= limitPriorit ? 'ok' : 'err'}">${NAZVY_PRIORIT[u]}: ${pocty[u]}/${limitPriorit}</span>`).join(' | ')
+                   + `</div>`;
+
+            oblasti.forEach(o => {
+                const z = uzivPriority[o.id];
+                html += `<div class="card"><p>${o.text}</p><div class="options">`
+                      + [3, 2, 1].map(u => `<button class="${TRIDY_PRIORIT[u]} ${z === u ? 'selected' : ''}" onclick="odpovezPrioritu('${o.id}', ${u})">${NAZVY_PRIORIT[u]}</button>`).join('')
+                      + `</div></div>`;
+            });
+
+            html += `<button class="submit-btn" onclick="zkontrolujAVyhodnot()">Vyhodnotit shodu</button></div>`;
+            appDiv.innerHTML = html;
+
+            // Při překročení limitu odscrolluje na počítadlo
+            if (jeLimitPrekrocen(pocty)) {
+                document.querySelector('.counter-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
+        window.zkontrolujAVyhodnot = function() {
+            if (jeLimitPrekrocen(spocitejPriority())) {
+                alert(`Překročili jste povolený limit! Můžete vybrat maximálně ${limitPriorit} oblastí v každé kategorii.`);
+                return;
+            }
+
+            // Do kalkulačky jdou jen kandidáti s kompletně vyplněnými prioritami (5/5/5)
+            vysledky = kandidati.filter(maPlnePriority).map(kand => {
+                let maxBodu = 0, ziskaneBody = 0, detaily = [];
+
+                // Otázky Ano/Ne – "Nevím" uživatele se nepočítá
+                otazky.forEach(o => {
+                    const u = uzivOdpovedi[o.id];
+                    const k = kand.odpovedi[o.id];
+                    if (u === 1 || u === -1) {
+                        const body = u === k ? 2 : 0;
+                        maxBodu += 2;
+                        ziskaneBody += body;
+                        detaily.push({ typ: 'otazka', text: o.text, uTxt: u === 1 ? 'Ano' : 'Ne', kTxt: k === 1 ? 'Ano' : (k === -1 ? 'Ne' : 'Nevyjádřil se'), body });
+                    }
+                });
+
+                // Priority – počítají se jen oblasti, které uživatel označil
+                oblasti.forEach(o => {
+                    const u = uzivPriority[o.id] || 0;
+                    const k = kand.priority[o.id] || 0;
+                    if (u > 0) {
+                        const body = Math.max(0, 2 - Math.abs(u - k)); // 2, 1 nebo 0
+                        maxBodu += 2;
+                        ziskaneBody += body;
+                        detaily.push({ typ: 'priorita', text: o.text, uTxt: NAZVY_PRIORIT[u], kTxt: NAZVY_PRIORIT[k], body });
+                    }
+                });
+
+                const procento = maxBodu > 0 ? Math.round((ziskaneBody / maxBodu) * 100) : 0;
+                return { id: kand.id, jmeno: kand.jmeno, foto: kand.foto, sekce: kand.info.sekce, procento, detaily };
+            });
+
+            // Při shodě procent zůstává pořadí z data.js (sort je stabilní)
+            vysledky.sort((a, b) => b.procento - a.procento);
+            vykresliVysledky('Vse', true);
+        };
+
+        window.vykresliVysledky = function(filtr = 'Vse', isFirstLoad = false) {
+            aktualniFiltr = filtr;
+            const seznam = filtr === 'Vse' ? vysledky : vysledky.filter(v => v.sekce === filtr);
+
+            let html = isFirstLoad ? `<div class="fade-in">` : `<div>`;
+            html += `<h1>Vaše shoda s kandidáty</h1>`
+                  + `<div class="instruction-box"><strong>Procento shody není doporučení, koho volit.</strong> Je to vstupní brána: otevřete si profily, přečtěte si zdůvodnění a programy. <a href="o-kalkulacce.html#vysledky" target="_blank" style="color:var(--cyan);">Jak číst výsledky ↗</a></div>`
+                  + filtrySekci(filtr, 'vykresliVysledky');
+
+            const vynechani = kandidati.filter(k => !maPlnePriority(k) && (filtr === 'Vse' || k.info.sekce === filtr));
+            if (vynechani.length > 0) {
+                html += `<div class="instruction-box">Kandidáti bez vyplněných priorit nejsou ve výsledcích zahrnuti: ${vynechani.map(k => k.jmeno).join(', ')}.</div>`;
+            }
+            if (seznam.length === 0) html += `<p style="text-align:center;">V této sekci nejsou žádní kandidáti.</p>`;
+
+            seznam.forEach(v => {
+                html += `
+                    <div class="card ${sekceTrida(v.sekce)}">
+                        <div class="res-head">
+                            ${v.foto ? `<img class="res-photo" src="${v.foto}" alt="">` : ''}
+                            <div style="flex:1;">
+                                <h3 style="text-align: left; color: white; margin: 0;">${v.jmeno} <span style="float:right; color: var(--cyan);">${v.procento} %</span></h3>
+                                <div style="font-size: 11px; color: #888;">Sekce: ${v.sekce}</div>
+                            </div>
+                        </div>
+                        <div class="match-bar"><div class="match-fill" style="width: ${v.procento}%"></div></div>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="zobrazDetail('${v.id}')" style="border-color:var(--cyan); color:var(--cyan);">Porovnat odpovědi</button>
+                            <a href="kandidati.html?kandidat=${v.id}" target="_blank" class="btn" style="border-color:var(--yellow); color:var(--yellow);">Profil kandidáta ↗</a>
+                        </div>
+                    </div>`;
+            });
+            html += `<button class="submit-btn" style="border-color: #888; color: #ccc;" onclick="vykresliFormular()">Upravit moje odpovědi</button></div>`;
+            appDiv.innerHTML = html;
+        };
+
+        window.zobrazDetail = function(id) {
+            const v = vysledky.find(x => x.id === id);
+            const barvy = { 2: 'var(--cyan)', 1: 'var(--yellow)', 0: 'var(--magenta)' };
+            const radek = d => `<div class="detail-item"><div style="width: 65%; padding-right: 15px;">${d.text}</div><div style="width: 35%; text-align: right; color: ${barvy[d.body]};">Vy: ${d.uTxt}<br>Kand: ${d.kTxt}</div></div>`;
+            const nadpis = t => `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">${t}</h3>`;
+
+            appDiv.innerHTML = `<div>
+                <button class="submit-btn back-btn" onclick="vykresliVysledky('${aktualniFiltr}')">← Zpět na výsledky</button>
+                <h2>Detailní shoda: ${v.jmeno}</h2>
+                ${nadpis('Otázky')}${v.detaily.filter(d => d.typ === 'otazka').map(radek).join('')}
+                ${nadpis('Oblasti (Priority)')}${v.detaily.filter(d => d.typ === 'priorita').map(radek).join('')}
+            </div>`;
+        };
+
+        vykresliFormular(true);
+    });
+</script>
+</body>
+</html>

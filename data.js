@@ -86,6 +86,8 @@ function maPlnePriority(k) {
 // Zápatí obou stránek
 function paticka() {
     return `<footer class="paticka">
+        <nav class="paticka-nav"><a href="index.html">Úvod</a> · <a href="kalkulacka.html">Kalkulačka</a> · <a href="kandidati.html">Kandidáti</a> · <a href="o-kalkulacce.html">Proč to celé?</a></nav>
+        Nezávislá studentská iniciativa, nikoli oficiální nástroj SKAS ani ASF.<br>
         Vytvořeno pro účely voleb do Studentské komory Akademického senátu PřF UK (SK ASF) v roce 2026.
         Za obsah odpovídají samotní kandidáti, kteří veškeré údaje poskytli, nebo jsou součástí jejich veřejných kandidatur.
     </footer>`;
@@ -291,7 +293,7 @@ const kandidati = [
         'Geologie (paleontologie)', '1. ročník nMgr.', '', {
             o5: 'Chce být dostupnou zástupkyní geologů a informovat o rozhodnutích senátu.',
             o7: 'Pořádá přednášku pro prváky o zkouškovém a chce sdílení zkušeností mezi ročníky.'
-        }, ''),
+        }),
     kandidat('pernicky', 'Patrik Pernický', 'Geologie a ÚŽP', '1Il-yFWJ-sUN9fNniW4TiJMMR7i6_Cj0p',
         'Geologie', '3. ročník', 'patrik.pernicky@natur.cuni.cz', {
             o5: 'Lepší komunikace mezi senátem a voliči.',
