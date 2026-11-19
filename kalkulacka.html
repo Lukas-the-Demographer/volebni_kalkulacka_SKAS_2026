@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volební kalkulačka ASF PřF UK</title>
-    <!-- ?v=7: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=8: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=7">
-    <script src="data.js?v=7"></script>
+    <link rel="stylesheet" href="style.css?v=8">
+    <script src="data.js?v=8"></script>
 </head>
 <body>
 
@@ -106,7 +106,7 @@
 
             oblasti.forEach(o => {
                 const z = uzivPriority[o.id];
-                html += `<div class="card"><p>${o.text}</p><div class="options">`
+                html += `<div class="card"><p class="otazka-text">${o.text}</p>${popisOblastiHtml(o)}<div class="options">`
                       + [3, 2, 1].map(u => `<button class="${TRIDY_PRIORIT[u]} ${z === u ? 'selected' : ''}" onclick="odpovezPrioritu('${o.id}', ${u})">${NAZVY_PRIORIT[u]}</button>`).join('')
                       + `</div></div>`;
             });
@@ -195,7 +195,9 @@
                         </div>
                     </div>`;
             });
-            html += `<button class="submit-btn" style="border-color: #888; color: #ccc;" onclick="vykresliFormular()">Upravit moje odpovědi</button></div>`;
+            html += `<button class="submit-btn" style="border-color: #888; color: #ccc;" onclick="vykresliFormular()">Upravit moje odpovědi</button>`;
+            // Na konci výsledků návod, jak volit (spousta lidí neví, že má víc hlasů)
+            html += jakVolitHtml() + `</div>`;
             appDiv.innerHTML = html;
         };
 

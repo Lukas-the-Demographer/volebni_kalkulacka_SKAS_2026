@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profily kandidátů ASF PřF UK</title>
-    <!-- ?v=7: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=8: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=7">
-    <script src="data.js?v=7"></script>
+    <link rel="stylesheet" href="style.css?v=8">
+    <script src="data.js?v=8"></script>
 </head>
 <body>
 
@@ -111,7 +111,7 @@
                 .sort((a, b) => b.u - a.u || a.text.localeCompare(b.text, 'cs'));
             serazeneOblasti.forEach(o => {
                 const stitek = o.u ? NAZVY_PRIORIT[o.u] : 'Nevyplněno';
-                html += `<div class="profil-polozka prio-${o.u}"><div class="prio-hlava"><span class="prio-stitek">${stitek}</span>${o.text}</div>${kom[o.id] ? `<div class="qa-a">${kom[o.id]}</div>` : ''}</div>`;
+                html += `<div class="profil-polozka prio-${o.u}"><div class="prio-hlava"><span class="prio-stitek">${stitek}</span>${o.text}</div>${popisOblastiHtml(o)}${kom[o.id] ? `<div class="qa-a">${kom[o.id]}</div>` : ''}</div>`;
             });
             html += `</div></div>`;
 

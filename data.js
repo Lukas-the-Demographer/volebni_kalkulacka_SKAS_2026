@@ -41,17 +41,17 @@ function filtrySekci(aktivni, fn, sPoctemMandatu = false) {
 const otazky = [
     // Spolky, iniciativy a komunita
     { id: 'q1', text: 'Měly by peníze pro spolky jít hlavně těm s nejkvalitnějšími žádostmi?',
-      pro: 'Peníze se využijí efektivněji, podpoří se akce s největším přínosem a spolky budou motivované psát dobré žádosti. SKAS k tomu loni zavedl bodovací systém pro hodnocení žádostí.',
+      pro: 'Peníze se využijí efektivněji, podpoří se akce s největším přínosem a spolky budou motivované psát dobré žádosti.',
       proti: 'Malé a nové spolky, které ještě neumí psát žádosti, mohou přijít zkrátka. Rovnoměrnější rozdělení drží pestrý spolkový život, i když jednotlivé akce dostanou méně.' },
     { id: 'q2', text: 'Měl by SKAS mít hranici, za kterou už spolek další podporu nedostane?',
       pro: 'Hranice – ať jde o výši dosavadní podpory, nebo o opakované porušování pravidel (žádosti po termínu, chybějící vyúčtování) – brání tomu, aby peníze brali jen ti nejaktivnější, a vede spolky k disciplíně.',
-      proti: 'Aktivní spolky s dobrými nápady by mohly narazit na strop, i když peníze zbývají. Přísná pravidla dopadají i na drobná a nezaviněná pochybení – SKAS v podobných případech někdy výjimku udělil, jindy ne.' },
+      proti: 'Aktivní spolky s dobrými nápady by mohly narazit na strop, i když peníze zbývají. Přísná pravidla dopadají i na drobná a nezaviněná pochybení – SKAS v podobných případech spíše postupuje individuálně dle okolností.' },
     { id: 'q3', text: 'Měla by fakulta poskytovat spolkům své prostory a zázemí zdarma?',
       pro: 'Spolky jsou neziskové a dělají z fakulty živé místo. Poplatky za energie, úklid a správu je zbytečně zatěžují a odrazují od pořádání akcí.',
       proti: 'Náklady nezmizí – fakulta je zaplatí z peněz, které by mohly jít na jiné potřeby studentů. Dnes fakulta za akce mimo rozvrh úhradu provozních nákladů požaduje.' },
     { id: 'q4', text: 'Měl by SKAS převzít správu studentských prostor (Loděnice, vnitroblok Hlavova 8, zahrada v Horské)?',
       pro: 'Studenti nejlépe vědí, jak prostory využít. SKAS by mohl pružně nastavovat pravidla a rozdělovat prostor mezi spolky a iniciativy.',
-      proti: 'Správa znamená práci a odpovědnost za provoz i škody, kterou by nesli neplacení dobrovolníci. SKAS v roce 2026 právní odpovědnost odmítl a hlasování o zprostředkování správy bylo jedno z nejtěsnějších (5–0–4).' },
+      proti: 'Správa znamená práci a odpovědnost za provoz i škody, kterou by nesli neplacení dobrovolníci. U konkrétního prostoru to SKAS v roce 2026 velmi těsně odmítl.' },
 
     // Role senátu a senátora
     { id: 'q5', text: 'Měl by se Akademický senát fakulty veřejně vyjadřovat k politickým tématům?',
@@ -61,13 +61,12 @@ const otazky = [
       pro: 'Senát je kontrolní orgán: schvaluje rozpočet a předpisy a volí děkana. Bez důsledné kontroly by vedení rozhodovalo samo.',
       proti: 'Senátor může studentům přinést víc, když sám přichází s návrhy a projekty a s vedením na nich spolupracuje. Samotná kontrola nic nového nevytvoří.' },
     { id: 'q7', text: 'Měl by senát využívat svůj rozpočet hlavně na vlastní akce a projekty pro studenty?',
-      pro: 'Senát by se studentům víc ukázal a mohl by přímo zlepšovat studentský život, místo aby peníze šly jen na jeho provoz (např. odměny předsedům komisí, občerstvení na jednáních).',
-      proti: 'Akce pořádají spolky, které senát sám financuje – konkuroval by jim. Senátoři mají omezený čas, který potřebují hlavně na rozpočet, předpisy a kontrolu vedení.' },
+      info: 'Senát má vlastní rozpočet. Může ho využívat na svůj provoz (např. odměny předsedům komisí, občerstvení na jednáních), nebo na vlastní akce a projekty. Akce pro studenty dnes pořádají hlavně spolky, které SKAS podporuje.' },
 
     // Studijní záležitosti
     { id: 'q8', text: 'Měla by fakulta rozvíjet cizí jazyky hlavně přes odborné předměty vyučované v cizím jazyce?',
       pro: 'Studenti se naučí odbornou terminologii přímo ve svém oboru a předměty se zároveň otevřou zahraničním studentům.',
-      proti: 'Kdo jazyk dobře neovládá, se v odborném předmětu v angličtině ztratí. Samostatné jazykové kurzy učí jazyk systematicky – a studenti v dotazníku fakulty dali přednost povinné angličtině.' },
+      proti: 'Kdo jazyk dobře neovládá, ten se v odborném předmětu v angličtině ztratí. Samostatné jazykové kurzy učí jazyk systematicky – a studenti v dotazníku fakulty dali přednost povinné angličtině.' },
     { id: 'q9', text: 'Měly by studijní programy dávat studentům víc volnosti při skládání studia?',
       pro: 'Víc povinně volitelných předmětů (jako moduly v bakalářské biologii) a možnost nahradit část výuky stáží nebo praxí umožní jít za vlastním zájmem a profilovat se.',
       proti: 'Studenti dostanou méně vedení, hůř se orientují v nabídce a nemusí získat ucelený základ oboru. Volnost také ztěžuje hodnocení kvality programu.' },
@@ -78,15 +77,15 @@ const otazky = [
       pro: 'Návratnost ankety je nízká (kolem 25 % v zimním a 15 % v letním semestru). Výhody pro vyplňující (např. přednostní zápis) a povinnost vyučujících reagovat na komentáře by z ní udělaly skutečný nástroj změny.',
       proti: 'Výhody za vyplnění mohou přinést rychlé a nekvalitní odpovědi a tlak může u studentů i vyučujících vyvolat odpor k anketě. Povinnost reagovat podle vedení nemá oporu v zákoně – ASF ji zatím jen doporučil.' },
     { id: 'q12', text: 'Měla by fakulta upravit pravidla doktorského studia ve prospěch doktorandů?',
-      pro: 'Například nezapočítávat stipendium GAUK do garantovaného minimálního příjmu nebo umožnit přijímání během celého roku. Doktorandi by měli jistější příjem a pružnější start.',
-      proti: 'Započítávání GAUK a pevný termín přijímání pomáhají fakultě uživit víc doktorandů a plánovat místa – změny mohou znamenat, že přijme méně doktorandů. O GAUK hlasoval ASF těsně (12–5–1).' },
+      pro: 'Například nezapočítávat stipendium GAUK do garantovaného minimálního příjmu – kdo grant získá, měl by pak vyšší příjem, což by doktorandy víc motivovalo o GAUK usilovat. Nebo umožnit přijímání během celého roku pro pružnější start studia.',
+      proti: 'Započítávání GAUK a pevný termín přijímání pomáhají fakultě uživit víc doktorandů a plánovat místa – změny mohou znamenat, že přijme méně doktorandů.' },
     { id: 'q13', text: 'Měla by fakulta kvůli AI změnit podobu závěrečných prací a zkoušek?',
       pro: 'Víc ústních obhajob a práce pod dohledem ověří, že student práci opravdu zvládá sám, a zachová hodnotu diplomu.',
       proti: 'Psaní delšího textu je samo o sobě důležitá dovednost. Ústní a dozorované formy jsou časově náročné a nevyhovují každému. AI se dá naopak učit používat zodpovědně.' },
 
     // Ostatní
     { id: 'q14', text: 'Měly by být budovy fakulty trvale uzamčené a přístupné jen s ISICem?',
-      pro: 'Omezí to přístup cizích osob, krádeže a vandalismus. SKAS i ASF v minulých letech řešily rizikové osoby v budovách.',
+      pro: 'Potenciálně by to odstranilo riziko vstupu cizích osob, krádeží a vandalismu v budovách.',
       proti: 'Kampus by ztratil otevřenost – hosté, uchazeči i veřejnost by měli ztížený přístup a zapomenutý ISIC by znamenal problém. Systém a případné hlídání by stály peníze.' },
     { id: 'q15', text: 'Měla by fakulta z vlastního rozpočtu financovat úpravy kampusu, které navrhují studentské iniciativy?',
       pro: 'Posezení, oživení vnitrobloků nebo třídění odpadu zlepšují každodenní život na fakultě a ukazují, že fakulta bere nápady studentů vážně. ASF už na úpravy okolí Dřeváku a vnitrobloku uvolnil 150 tisíc Kč.',
@@ -99,34 +98,60 @@ const otazky = [
     { id: 'q17', text: 'Dělá současný děkan a jeho kolegium dobrou práci?',
       info: 'Děkan doc. Vladimír Krylov vede fakultu od volby v roce 2024. Mezi hlavní témata jeho působení patří dostavba Biocentra a její financování, nová Pravidla pro organizaci studia, doktorský příjem a rozpočet fakulty. Senát vedení kontroluje – schvaluje rozpočet a předpisy.' },
     { id: 'q18', text: 'Měl by senát trvat na tom, aby podíl děkanátu na rozpočtu fakulty nerostl?',
-      pro: 'Víc peněz zůstane katedrám a sekcím na výuku a vědu. Ekonomická komise ASF na tom trvá – děkanát a celofakultní pracoviště mají dnes přes 280 milionů Kč.',
-      proti: 'Z celofakultních peněz se platí i služby pro studenty – studijní oddělení, IT, poradenství – a nové povinnosti mohou růst rozpočtu děkanátu opravdu vyžadovat. Strop by mohl tyto služby omezit.' },
+      info: 'Děkanát a celofakultní pracoviště mají dnes přes 280 milionů Kč. Rozpočty se ale nedají snadno oddělit – vedení je pod tlakem kvůli financování stavby Biocentra.',
+      pro: 'Víc peněz zůstane katedrám a sekcím na výuku a vědu. Ekonomická komise ASF na tom trvá.',
+      proti: 'Z celofakultních peněz se platí služby pro studenty i pro vědu – studijní oddělení, IT, podpora projektů a grantů – a nové povinnosti mohou růst rozpočtu děkanátu opravdu vyžadovat. Strop by mohl tyto služby omezit.' },
     { id: 'q19', text: 'Měly by předpisy fakulty stanovovat co nejpodrobnější a předem známá kritéria?',
-      pro: 'Podrobná pravidla (např. ve studijních pravidlech nebo u přijímacího řízení) jsou předvídatelná a chrání před nadržováním a libovůlí. Studenti v ASF prosazovali podrobné bodové tabulky u přijímaček.',
+      pro: 'Podrobná pravidla (např. ve studijních pravidlech nebo u přijímacího řízení) jsou předvídatelná a chrání před nadržováním a libovůlí.',
       proti: 'Neoblomná pravidla nedovolí zohlednit konkrétní situaci – třeba když je potřeba se studenta zastat. Vyučující a komise ztratí prostor pro rozumnou výjimku.' },
     { id: 'q20', text: 'Měl by se změnit současný systém voleb do senátu?',
-      pro: 'Dnes se volí v oddělených okrscích s pevným počtem mandátů pro každou sekci. Změn se nabízí víc – celofakultní volba (každý má víc hlasů, s pojistkou minimálního zastoupení sekcí), strop mandátů pro jednu sekci nebo jiné rozdělení okrsků –, aby složení senátu lépe odpovídalo fakultě. Legislativní komise ASF se výpočtem mandátů letos zabývala.',
+      pro: 'Dnes se volí v oddělených okrscích s pevným počtem mandátů pro každou sekci. Změn se nabízí víc – celofakultní volba (každý má víc hlasů, s pojistkou minimálního zastoupení sekcí), strop mandátů pro jednu sekci nebo jiné rozdělení okrsků –, aby složení senátu lépe odpovídalo fakultě. Legislativní komise ASF se výpočtem mandátů aktuálně zabývá.',
       proti: 'Současný systém zaručuje každé sekci její zástupce a je jednoduchý a srozumitelný. Změny by mohly oslabit malé sekce, nebo naopak znevýhodnit ty velké.' }
 ];
 
 // --- PRIORITNÍ OBLASTI (15 oblastí × 3 úrovně × limit 5 → kandidát má přesně 5/5/5) ---
 const oblasti = [
-    { id: 'o1',  text: 'Podpora a financování studentských spolků' },
-    { id: 'o2',  text: 'Prostory ke studiu a odpočinku, kampus Albertov a drobné zázemí (mikrovlnky, šatny, automaty, otevírací doby)' },
-    { id: 'o3',  text: 'Duševní zdraví, bezpečné a férové prostředí a inkluze (etický kodex, ombudsman, bezbariérovost, studující rodiče, bezpečnost v budovách)' },
-    { id: 'o4',  text: 'Otevřenost SKAS a komunikace se studenty' },
-    { id: 'o5',  text: 'Podpora prváků (úvodní soustředění, tutoři, Příručka prváka) a propagace fakulty (DOD, popularizace)' },
-    { id: 'o6',  text: 'Kvalita výuky, studentská anketa a zapojení studentů do tvorby programů' },
-    { id: 'o7',  text: 'Studijní pravidla a organizace studia (POS, SIS, informace o studiu)' },
-    { id: 'o8',  text: 'Stipendia a doktorské studium (příjem doktorandů, GAUK, motivační a sociální stipendia)' },
-    { id: 'o9',  text: 'Cizí jazyky a internacionalizace (cizojazyčné programy, poplatky)' },
-    { id: 'o10', text: 'Kariéra, praxe, stáže, Erasmus a terénní výuka' },
-    { id: 'o11', text: 'Udržitelnost a třídění odpadu' },
-    { id: 'o12', text: 'Hospodaření fakulty, rozpočet a Biocentrum' },
-    { id: 'o13', text: 'Sport a pohyb na fakultě (tělesná výchova, sprchy a sportovní zázemí, děkanský sportovní den)' },
-    { id: 'o14', text: 'Univerzitní politika (VŠ politika, témata z AS UK)' },
-    { id: 'o15', text: 'Tvorba vnitřních předpisů (statut, studijní, disciplinární a volební řád)' }
+    { id: 'o1',  text: 'Spolky',                        popis: 'Podpora a financování studentských spolků a iniciativ, pravidla pro žádosti a vyúčtování.' },
+    { id: 'o2',  text: 'Prostory a zázemí',             popis: 'Studovny a odpočinkové prostory, kampus Albertov, drobné zázemí – mikrovlnky, šatny, automaty, otevírací doby.' },
+    { id: 'o3',  text: 'Duševní zdraví a bezpečí',      popis: 'Psychologická pomoc, bezpečné a férové prostředí (etický kodex, ombudsman), inkluze, bezbariérovost, studující rodiče, bezpečnost v budovách.' },
+    { id: 'o4',  text: 'Komunikace se studenty',        popis: 'Otevřenost SKAS, informování studentů o dění v senátu, sběr podnětů a zpětné vazby.' },
+    { id: 'o5',  text: 'Prváci a propagace',            popis: 'Úvodní soustředění, tutoři, Příručka prváka, dny otevřených dveří a popularizace vědy.' },
+    { id: 'o6',  text: 'Kvalita výuky',                 popis: 'Studentská anketa, zpětná vazba k výuce a zapojení studentů do tvorby studijních programů.' },
+    { id: 'o7',  text: 'Organizace studia',             popis: 'Pravidla pro organizaci studia, SIS, srozumitelné informace o průběhu studia.' },
+    { id: 'o8',  text: 'Stipendia a doktorandi',        popis: 'Příjem doktorandů, GAUK, motivační, prospěchová a sociální stipendia.' },
+    { id: 'o9',  text: 'Jazyky a internacionalizace',   popis: 'Výuka cizích jazyků, cizojazyčné studijní programy, poplatky za studium v cizím jazyce.' },
+    { id: 'o10', text: 'Praxe a kariéra',               popis: 'Stáže, Erasmus a další výjezdy, terénní výuka, propojení s praxí a kariérní poradenství.' },
+    { id: 'o11', text: 'Udržitelnost',                  popis: 'Třídění odpadu a ekologie provozu fakulty.' },
+    { id: 'o12', text: 'Rozpočet fakulty',              popis: 'Hospodaření fakulty, kontrola rozpočtu a financování Biocentra.' },
+    { id: 'o13', text: 'Sport',                         popis: 'Tělesná výchova, sprchy a sportovní zázemí, děkanský sportovní den a další sportovní akce.' },
+    { id: 'o14', text: 'Univerzitní politika',          popis: 'Vysokoškolská politika a témata z Akademického senátu UK.' },
+    { id: 'o15', text: 'Vnitřní předpisy',              popis: 'Tvorba a změny statutu, studijního, disciplinárního a volebního řádu.' }
 ];
+
+// Rozbalovací popis oblasti („Co sem patří“)
+function popisOblastiHtml(o) {
+    return o.popis ? `<details class="kontext"><summary>Co sem patří</summary><p>${o.popis}</p></details>` : '';
+}
+
+// --- NÁVOD, JAK VOLIT (podle Volebního a jednacího řádu ASF a stránky voleb) ---
+const ODKAZ_HLASOVANI = 'https://hlasovani.is.cuni.cz/';
+function jakVolitHtml() {
+    const radky = sekce.map(s => `<li><strong>${s.nazev}:</strong> až ${s.voli} ${s.voli >= 5 ? 'kandidátů' : 'kandidáty'}</li>`).join('');
+    return `<div class="jak-volit" id="jak-volit">
+        <h2>Jak volit</h2>
+        <p class="jak-volit-hlavni"><strong>Máš víc než jeden hlas!</strong> Můžeš označit až tolik kandidátů, kolik se ve tvé sekci volí senátorů:</p>
+        <ul>${radky}</ul>
+        <ol>
+            <li><strong>Kdy:</strong> 24.–26. 11. 2026, elektronicky.</li>
+            <li><strong>Kde:</strong> <a href="${ODKAZ_HLASOVANI}" target="_blank">hlasovani.is.cuni.cz ↗</a> – přihlásíš se číslem osoby (na ISICu pod fotkou) a heslem do CAS, stejně jako do SIS.</li>
+            <li><strong>Koho:</strong> volíš kandidáty ze své sekce (okrsku).</li>
+            <li><strong>Kolik:</strong> nejvýše tolik, kolik je mandátů v tvé sekci. Nemusíš využít všechny hlasy – dej je těm, které v senátu opravdu chceš. Víc hlasů, než je povoleno, lístek zneplatní.</li>
+            <li><strong>Kdo vyhraje:</strong> zvoleni jsou kandidáti s nejvíce hlasy. Kdo se nedostane, ale získá hlas aspoň od 20 % voličů, stává se náhradníkem.</li>
+        </ol>
+        <p class="mensi">Volby jsou tajné – ukládá se jen to, že jsi hlasoval/a, ne koho jsi volil/a.</p>
+        <a class="volit-tlacitko" href="${ODKAZ_HLASOVANI}" target="_blank">Jít volit ↗</a>
+    </div>`;
+}
 
 // Rozbalovací kontext k otázce (Zastánci / Odpůrci, nebo věcné info). Používá kalkulačka i profily.
 function kontextHtml(o, otevreno = false, onToggle = '') {

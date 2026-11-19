@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O kalkulačce – volby do SK ASF PřF UK 2026</title>
-    <!-- ?v=7: po každé úpravě style.css nebo data.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=8: po každé úpravě style.css nebo data.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=7">
-    <script src="data.js?v=7"></script>
+    <link rel="stylesheet" href="style.css?v=8">
+    <script src="data.js?v=8"></script>
 </head>
 <body>
 
@@ -24,11 +24,13 @@
         <ul>
             <li>Procento shody <strong>není doporučení</strong>. Je to vstupní brána ke kandidátům.</li>
             <li>Senátoři, které teď zvolíš, budou schvalovat rozpočet fakulty a <strong>volit děkana</strong>.</li>
-            <li>Kdo kandiduje, ale neodpoví, odpověděl taky. Zeptej se ho proč.</li>
+            <li><strong>Máš víc než jeden hlas</strong> – v biologii až 7, v geografii 3, v chemii a v geologii a ÚŽP 2. <a href="#jak-volit">Jak volit ↓</a></li>
+            <li>Když kandidát na otázky neodpověděl, zeptej se ho přímo.</li>
         </ul>
     </div>
 
     <nav class="obsah">
+        <a href="#jak-volit">Jak volit</a>
         <a href="#vysledky">Jak číst výsledky</a>
         <a href="#vznik">Proč to vzniklo</a>
         <a href="#dulezitost">Proč je to důležité</a>
@@ -90,6 +92,8 @@
         <p>Volební kalkulačky jsou v Evropě běžné. Německý <strong>Wahl-O-Mat</strong> lidé před volbami do Bundestagu 2021 použili zhruba <strong>21 milionů krát</strong>. Výzkumy většinou nacházejí <strong>mírně vyšší volební účast</strong> u těch, kdo kalkulačku použili. Ve Švýcarsku asi o 1,2 procentního bodu, výrazněji u mladých. Na tom, koho lidé nakonec volí, se kalkulačky podepisují méně. A tak to má být: <strong>kalkulačka nikoho nezvolí. Ty ano.</strong></p>
     </section>
 
+    <div id="jak-volit-misto"></div>
+
     <div class="tldr" style="text-align:center;">
         <strong>Volby proběhnou elektronicky 24.–26. 11. 2026.</strong><br>
         <a href="kalkulacka.html" target="_blank">Vyplň kalkulačku</a> · <a href="kandidati.html" target="_blank">Prohlédni si kandidáty</a> · <a href="https://hlasovani.is.cuni.cz/" target="_blank"><strong>jdi volit ↗</strong></a>
@@ -108,6 +112,7 @@
 </div>
 
 <script>
+    document.getElementById('jak-volit-misto').outerHTML = jakVolitHtml();
     document.body.insertAdjacentHTML('beforeend', paticka());
 </script>
 </body>
