@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volební kalkulačka AS PřF UK</title>
-    <!-- ?v=6: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
-    <link rel="stylesheet" href="style.css?v=6">
-    <script src="data.js?v=6"></script>
+    <title>Volební kalkulačka ASF PřF UK</title>
+    <!-- ?v=7: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <link rel="icon" href="ikona.svg" type="image/svg+xml">
+    <link rel="icon" href="ikona.png" type="image/png">
+    <link rel="apple-touch-icon" href="ikona.png">
+    <link rel="stylesheet" href="style.css?v=7">
+    <script src="data.js?v=7"></script>
 </head>
 <body>
 
@@ -52,6 +55,10 @@
         }
         const jeLimitPrekrocen = p => [3, 2, 1].some(u => p[u] > limitPriorit);
 
+        // Rozbalené kontexty si pamatujeme, aby se po kliknutí na odpověď (překreslení) nezavřely
+        const otevreneKontexty = new Set();
+        window.prepniKontext = (id, otevreno) => { if (otevreno) otevreneKontexty.add(id); else otevreneKontexty.delete(id); };
+
         window.odpovezOtazku = function(id, val) { uzivOdpovedi[id] = val; vykresliFormular(); };
         window.odpovezPrioritu = function(id, val) {
             // Opětovné kliknutí na vybranou prioritu ji zruší
@@ -71,14 +78,16 @@
                         <strong>Nezávislá studentská iniciativa, nikoli oficiální nástroj SKAS ani ASF.</strong> <a href="o-kalkulacce.html" target="_blank" style="color:var(--cyan);">Jak kalkulačka vznikla ↗</a>
                      </div>
                      <div class="instruction-box">
-                        <strong>Návod:</strong> Vyberte Ano/Ne. Pokud vyberete "Nevím", otázka se do vašeho výsledku <strong>vůbec nezapočítá</strong> a nijak vás nepoškodí. Naopak kandidáti, kteří nedokáží zaujmout názor u tématu, na kterém vám záleží, body ztrácí.
+                        <strong>Návod:</strong> Vyberte Ano/Ne. Pod každou otázkou je rozbalovací <strong>Kontext</strong> – co zastánci a odpůrci vidí jako přínos a riziko. Pokud vyberete "Nevím", otázka se do vašeho výsledku <strong>vůbec nezapočítá</strong> a nijak vás nepoškodí. Naopak kandidáti, kteří nedokáží zaujmout názor u tématu, na kterém vám záleží, body ztrácí.
                      </div>`;
 
-            otazky.forEach(o => {
+            otazky.forEach((o, i) => {
                 const z = uzivOdpovedi[o.id];
                 html += `
                     <div class="card">
-                        <p>${o.text}</p>
+                        <div class="otazka-cislo">Otázka ${i + 1} / ${otazky.length}</div>
+                        <p class="otazka-text">${o.text}</p>
+                        ${kontextHtml(o, otevreneKontexty.has(o.id), `prepniKontext('${o.id}', this.open)`)}
                         <div class="options">
                             <button class="btn-ano ${z === 1 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', 1)">Ano</button>
                             <button class="btn-ne ${z === -1 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', -1)">Ne</button>

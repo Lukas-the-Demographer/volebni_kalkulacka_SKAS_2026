@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profily kandidátů AS PřF UK</title>
-    <!-- ?v=6: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
-    <link rel="stylesheet" href="style.css?v=6">
-    <script src="data.js?v=6"></script>
+    <title>Profily kandidátů ASF PřF UK</title>
+    <!-- ?v=7: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <link rel="icon" href="ikona.svg" type="image/svg+xml">
+    <link rel="icon" href="ikona.png" type="image/png">
+    <link rel="apple-touch-icon" href="ikona.png">
+    <link rel="stylesheet" href="style.css?v=7">
+    <script src="data.js?v=7"></script>
 </head>
 <body>
 
@@ -97,7 +100,7 @@
             otazky.forEach(o => {
                 const v = k.odpovedi[o.id];
                 const odp = v === 1 ? `<span class="odp odp-ano">Ano</span>` : v === -1 ? `<span class="odp odp-ne">Ne</span>` : `<span class="odp">Neodpověděl/a</span>`;
-                html += `<div class="profil-polozka"><div class="qa-q">${o.text}</div>${odp}${kom[o.id] ? `<div class="qa-a">${kom[o.id]}</div>` : ''}</div>`;
+                html += `<div class="profil-polozka"><div class="qa-q">${o.text}</div>${kontextHtml(o)}${odp}${kom[o.id] ? `<div class="qa-a">${kom[o.id]}</div>` : ''}</div>`;
             });
             html += `</div>`;
 
