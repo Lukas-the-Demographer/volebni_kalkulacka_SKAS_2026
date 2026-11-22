@@ -76,7 +76,7 @@ const otazky = [
     { id: 'q11', text: 'Měla by fakulta víc tlačit na to, aby studenti i vyučující anketu neignorovali?',
       pro: 'Návratnost ankety je nízká (kolem 25 % v zimním a 15 % v letním semestru). Výhody pro vyplňující (např. přednostní zápis) a povinnost vyučujících reagovat na komentáře by z ní udělaly skutečný nástroj změny.',
       proti: 'Výhody za vyplnění mohou přinést rychlé a nekvalitní odpovědi a tlak může u studentů i vyučujících vyvolat odpor k anketě. Povinnost reagovat podle vedení nemá oporu v zákoně – ASF ji zatím jen doporučil.' },
-    { id: 'q12', text: 'Měla by fakulta upravit pravidla doktorského studia ve prospěch doktorandů?',
+    { id: 'q12', text: 'Měla by fakulta upravit pravidla doktorského studia ve prospěch doktorandů (např. konec zanořování GAUK či flexibilnější nástup)?',
       pro: 'Například nezapočítávat stipendium GAUK do garantovaného minimálního příjmu – kdo grant získá, měl by pak vyšší příjem, což by doktorandy víc motivovalo o GAUK usilovat. Nebo umožnit přijímání během celého roku pro pružnější start studia.',
       proti: 'Započítávání GAUK a pevný termín přijímání pomáhají fakultě uživit víc doktorandů a plánovat místa – změny mohou znamenat, že přijme méně doktorandů.' },
     { id: 'q13', text: 'Měla by fakulta kvůli AI změnit podobu závěrečných prací a zkoušek?',
