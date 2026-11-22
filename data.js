@@ -1,5 +1,5 @@
 // =====================================================================
-//  Volby do Studentské komory ASF PřF UK 2026 – OSTRÁ DATA
+//  Volby do SKASu PřF UK 2026 – OSTRÁ DATA
 //  Kandidáti podle https://natur.cuni.cz/.../volby-do-studentske-komory-asf-2026
 //  Komentáře u oblastí = stručné parafráze volebních programů kandidátů.
 //  Odpovědi Ano/Ne, priority a nepříjemné otázky vyplňují SAMI KANDIDÁTI.
@@ -188,7 +188,7 @@ function paticka() {
     return `<footer class="paticka">
         <nav class="paticka-nav"><a href="index.html">Úvod</a> · <a href="kalkulacka.html">Kalkulačka</a> · <a href="kandidati.html">Kandidáti</a> · <a href="o-kalkulacce.html">Proč to celé?</a></nav>
         Nezávislá studentská iniciativa, nikoli oficiální nástroj SKAS ani ASF.<br>
-        Vytvořeno pro účely voleb do Studentské komory Akademického senátu PřF UK (SK ASF) v roce 2026.
+        Vytvořeno pro účely voleb do SKASu PřF UK v roce 2026.
         Za obsah odpovídají samotní kandidáti, kteří veškeré údaje poskytli, nebo jsou součástí jejich veřejných kandidatur.
     </footer>`;
 }
