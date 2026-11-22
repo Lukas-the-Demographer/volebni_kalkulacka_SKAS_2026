@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volební kalkulačka ASF PřF UK</title>
-    <!-- ?v=11: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=12: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=11">
-    <script src="data.js?v=11"></script>
-    <script src="odpovedi.js?v=11"></script>
+    <link rel="stylesheet" href="style.css?v=12">
+    <script src="data.js?v=12"></script>
+    <script src="odpovedi.js?v=12"></script>
 </head>
 <body>
 
@@ -185,7 +185,6 @@
                 html += `<div class="instruction-box">Kandidáti bez vyplněných priorit nejsou ve výsledcích zahrnuti: ${vynechani.map(k => k.jmeno).join(', ')}.</div>`;
             }
             if (seznam.length === 0) html += `<p style="text-align:center;">V této sekci nejsou žádní kandidáti.</p>`;
-
             seznam.forEach(v => {
                 html += `
                     <div class="card ${sekceTrida(v.sekce)}">
@@ -207,13 +206,14 @@
             // Na konci výsledků návod, jak volit (spousta lidí neví, že má víc hlasů)
             html += jakVolitHtml() + `</div>`;
             appDiv.innerHTML = html;
+            window.scrollTo(0, 0); // výsledky vždy odshora, ne na konci stránky
         };
 
         window.zobrazDetail = function(id) {
             const v = vysledky.find(x => x.id === id);
             const barvy = { 2: 'var(--cyan)', 1: 'var(--yellow)', 0: 'var(--magenta)' };
             // Zdůvodnění kandidáta je rozbalovací přímo pod otázkou
-            const radek = d => `<div class="detail-item"><div style="width: 65%; padding-right: 15px;">${d.text}${d.zduvodneni ? `<details class="kontext"><summary>Zdůvodnění kandidáta</summary><p>${d.zduvodneni}</p></details>` : ''}</div><div style="width: 35%; text-align: right; color: ${d.body === null ? '#888' : barvy[d.body]};">Ty: ${d.uTxt}<br>Kand: ${d.kTxt}</div></div>`;
+            const radek = d => `<div class="detail-item"><div style="width: 65%; padding-right: 15px;">${d.text}${d.zduvodneni ? `<details class="kontext"><summary>Zdůvodnění kandidáta</summary><p>${d.zduvodneni}</p></details>` : ''}</div><div style="width: 35%; text-align: right; color: ${d.body === null ? '#888' : barvy[d.body]};">Ty: ${d.uTxt}<br>Kandidát: ${d.kTxt}</div></div>`;
             const nadpis = t => `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">${t}</h3>`;
 
             appDiv.innerHTML = `<div>
@@ -222,6 +222,7 @@
                 ${nadpis('Otázky')}${v.detaily.filter(d => d.typ === 'otazka').map(radek).join('')}
                 ${nadpis('Oblasti (Priority)')}${v.detaily.filter(d => d.typ === 'priorita').map(radek).join('')}
             </div>`;
+            window.scrollTo(0, 0);
         };
 
         vykresliFormular(true);

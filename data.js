@@ -223,7 +223,9 @@ function kandidat(id, jmeno, sekceNazev, driveId, obor, rocnik, kontakt, komenta
     return {
         id, jmeno, foto,
         info: { sekce: sekceNazev, obor, rocnik, kontakt, odkaz: drive(driveId) },
-        odpovedi: {}, priority: {}, komentare: prevedKomentare(komentare), neprijemne: {}
+        // Shrnutí programů (parametr komentare) se v profilu nezobrazují – v profilu mají být jen texty samotných kandidátů.
+        // Zdůvodnění odpovědí doplní odpovedi.js.
+        odpovedi: {}, priority: {}, komentare: {}, neprijemne: {}
     };
 }
 
