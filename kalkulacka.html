@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volební kalkulačka – volby do SKASu PřF UK</title>
-    <!-- ?v=29: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=30: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=29">
-    <script src="data.js?v=29"></script>
-    <script src="odpovedi.js?v=29"></script>
+    <link rel="stylesheet" href="style.css?v=30">
+    <script src="data.js?v=30"></script>
+    <script src="odpovedi.js?v=30"></script>
 </head>
 <body>
 
@@ -182,7 +182,8 @@
 
             const vynechani = kandidati.filter(k => !maPlnePriority(k) && (filtr === 'Vse' || k.info.sekce === filtr));
             if (vynechani.length > 0) {
-                html += `<div class="instruction-box">Kandidáti bez vyplněných priorit nejsou ve výsledcích zahrnuti: ${vynechani.map(k => k.jmeno).join(', ')}.</div>`;
+                const odkazy = vynechani.map(k => `<a href="kandidati.html?kandidat=${k.id}" target="_blank" style="color:var(--cyan);">${k.jmeno}</a> (${k.info.sekce})`).join(', ');
+                html += `<div class="instruction-box"><strong>Do kalkulačky se nezapojili, a proto nejsou ve výsledcích:</strong> ${odkazy}. Jejich programy, a u některých i vysvětlení, proč se nezapojili, najdeš v profilech.</div>`;
             }
             if (seznam.length === 0) html += `<p style="text-align:center;">V této sekci nejsou žádní kandidáti.</p>`;
             seznam.forEach(v => {
