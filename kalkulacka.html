@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volební kalkulačka ASF PřF UK</title>
-    <!-- ?v=8: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=11: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=8">
-    <script src="data.js?v=8"></script>
+    <link rel="stylesheet" href="style.css?v=11">
+    <script src="data.js?v=11"></script>
+    <script src="odpovedi.js?v=11"></script>
 </head>
 <body>
 
@@ -78,7 +79,7 @@
                         <strong>Nezávislá studentská iniciativa, nikoli oficiální nástroj SKAS ani ASF.</strong> <a href="o-kalkulacce.html" target="_blank" style="color:var(--cyan);">Jak kalkulačka vznikla ↗</a>
                      </div>
                      <div class="instruction-box">
-                        <strong>Návod:</strong> Vyberte Ano/Ne. Pod každou otázkou je rozbalovací <strong>Kontext</strong> – co zastánci a odpůrci vidí jako přínos a riziko. Pokud vyberete "Nevím", otázka se do vašeho výsledku <strong>vůbec nezapočítá</strong> a nijak vás nepoškodí. Naopak kandidáti, kteří nedokáží zaujmout názor u tématu, na kterém vám záleží, body ztrácí.
+                        <strong>Návod:</strong> Vyber Ano/Ne. Pod každou otázkou je rozbalovací <strong>Kontext</strong> – co zastánci a odpůrci vidí jako přínos a riziko. Pokud vybereš "Nevím", otázka se do tvého výsledku <strong>vůbec nezapočítá</strong> a nijak tě nepoškodí. Když kandidát na otázku neodpověděl, počítá se to jako neshoda – kromě otázek 16 a 17 o děkanovi, které se mu v takovém případě nezapočítají vůbec.
                      </div>`;
 
             otazky.forEach((o, i) => {
@@ -98,7 +99,7 @@
 
             html += `<h2>2. Téma a priority</h2>
                      <div class="instruction-box">
-                        <strong>Návod:</strong> Vyberte <strong>maximálně ${limitPriorit}</strong> témat v každé kategorii. <strong>Není nutné vybrat vše</strong>. Oblasti, které neoznačíte, kalkulačka vynechá. Znovu-kliknutím na tlačítko prioritu zrušíte.
+                        <strong>Návod:</strong> Vyber <strong>maximálně ${limitPriorit}</strong> témat v každé kategorii. <strong>Není nutné vybrat vše</strong>. Oblasti, které neoznačíš, kalkulačka vynechá. Opětovným kliknutím na tlačítko prioritu zrušíš.
                      </div>
                      <div class="counter-box">`
                    + [3, 2, 1].map(u => `<span class="counter ${pocty[u] <= limitPriorit ? 'ok' : 'err'}">${NAZVY_PRIORIT[u]}: ${pocty[u]}/${limitPriorit}</span>`).join(' | ')
@@ -122,7 +123,7 @@
 
         window.zkontrolujAVyhodnot = function() {
             if (jeLimitPrekrocen(spocitejPriority())) {
-                alert(`Překročili jste povolený limit! Můžete vybrat maximálně ${limitPriorit} oblastí v každé kategorii.`);
+                alert(`Překročil/a jsi povolený limit! Můžeš vybrat maximálně ${limitPriorit} oblastí v každé kategorii.`);
                 return;
             }
 
@@ -130,15 +131,22 @@
             vysledky = kandidati.filter(maPlnePriority).map(kand => {
                 let maxBodu = 0, ziskaneBody = 0, detaily = [];
 
-                // Otázky Ano/Ne – "Nevím" uživatele se nepočítá
+                // Otázky Ano/Ne – "Nevím" uživatele se nepočítá.
+                // Nezodpovězená otázka kandidáta = neshoda, kromě OTAZKY_DOBROVOLNE (q16, q17), které se pak vůbec nepočítají.
                 otazky.forEach(o => {
                     const u = uzivOdpovedi[o.id];
                     const k = kand.odpovedi[o.id];
+                    const zduvodneni = (kand.komentare || {})[o.id] || '';
                     if (u === 1 || u === -1) {
+                        const uTxt = u === 1 ? 'Ano' : 'Ne';
+                        if (k !== 1 && k !== -1 && OTAZKY_DOBROVOLNE.includes(o.id)) {
+                            detaily.push({ typ: 'otazka', text: o.text, uTxt, kTxt: 'Nechce odpovídat', body: null, zduvodneni });
+                            return;
+                        }
                         const body = u === k ? 2 : 0;
                         maxBodu += 2;
                         ziskaneBody += body;
-                        detaily.push({ typ: 'otazka', text: o.text, uTxt: u === 1 ? 'Ano' : 'Ne', kTxt: k === 1 ? 'Ano' : (k === -1 ? 'Ne' : 'Nevyjádřil se'), body });
+                        detaily.push({ typ: 'otazka', text: o.text, uTxt, kTxt: k === 1 ? 'Ano' : (k === -1 ? 'Ne' : 'Neodpověděl/a'), body, zduvodneni });
                     }
                 });
 
@@ -168,8 +176,8 @@
             const seznam = filtr === 'Vse' ? vysledky : vysledky.filter(v => v.sekce === filtr);
 
             let html = isFirstLoad ? `<div class="fade-in">` : `<div>`;
-            html += `<h1>Vaše shoda s kandidáty</h1>`
-                  + `<div class="instruction-box"><strong>Procento shody není doporučení, koho volit.</strong> Je to vstupní brána: otevřete si profily, přečtěte si zdůvodnění a programy. <a href="o-kalkulacce.html#vysledky" target="_blank" style="color:var(--cyan);">Jak číst výsledky ↗</a></div>`
+            html += `<h1>Tvoje shoda s kandidáty</h1>`
+                  + `<div class="instruction-box"><strong>Procento shody není doporučení, koho volit.</strong> Je to vstupní brána: otevři si profily, přečti si zdůvodnění a programy. <a href="o-kalkulacce.html#vysledky" target="_blank" style="color:var(--cyan);">Jak číst výsledky ↗</a></div>`
                   + filtrySekci(filtr, 'vykresliVysledky');
 
             const vynechani = kandidati.filter(k => !maPlnePriority(k) && (filtr === 'Vse' || k.info.sekce === filtr));
@@ -204,7 +212,8 @@
         window.zobrazDetail = function(id) {
             const v = vysledky.find(x => x.id === id);
             const barvy = { 2: 'var(--cyan)', 1: 'var(--yellow)', 0: 'var(--magenta)' };
-            const radek = d => `<div class="detail-item"><div style="width: 65%; padding-right: 15px;">${d.text}</div><div style="width: 35%; text-align: right; color: ${barvy[d.body]};">Vy: ${d.uTxt}<br>Kand: ${d.kTxt}</div></div>`;
+            // Zdůvodnění kandidáta je rozbalovací přímo pod otázkou
+            const radek = d => `<div class="detail-item"><div style="width: 65%; padding-right: 15px;">${d.text}${d.zduvodneni ? `<details class="kontext"><summary>Zdůvodnění kandidáta</summary><p>${d.zduvodneni}</p></details>` : ''}</div><div style="width: 35%; text-align: right; color: ${d.body === null ? '#888' : barvy[d.body]};">Ty: ${d.uTxt}<br>Kand: ${d.kTxt}</div></div>`;
             const nadpis = t => `<h3 style="color: var(--cyan); text-align: left; margin-top: 30px;">${t}</h3>`;
 
             appDiv.innerHTML = `<div>

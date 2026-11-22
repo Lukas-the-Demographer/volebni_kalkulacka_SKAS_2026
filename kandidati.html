@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profily kandidátů ASF PřF UK</title>
-    <!-- ?v=8: po každé úpravě style.css nebo data.js zvyš číslo (v obou HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=11: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=8">
-    <script src="data.js?v=8"></script>
+    <link rel="stylesheet" href="style.css?v=11">
+    <script src="data.js?v=11"></script>
+    <script src="odpovedi.js?v=11"></script>
 </head>
 <body>
 
@@ -91,7 +92,10 @@
                     </div>
                     <div class="kand-detail-content">`;
 
-            if (!maPlnePriority(k)) {
+            if (!k.vyplnil) {
+                html += `<div class="instruction-box">Kandidát se do kalkulačky nezapojil, a proto není zahrnut ve výsledcích. Jeho program najdeš v PDF výše.</div>`;
+                if (k.vyjadreniNeucasti) html += `<div class="qa-block"><div class="qa-q">Proč jsem se do kalkulačky nezapojil/a</div><div class="qa-a">${k.vyjadreniNeucasti}</div></div>`;
+            } else if (!maPlnePriority(k)) {
                 html += `<div class="instruction-box">Kandidát nevyplnil všechny priority, a proto není zahrnut ve výsledcích kalkulačky.</div>`;
             }
 
@@ -99,13 +103,15 @@
             html += `<div class="profil-grid"><div><h4>Otázky Ano/Ne</h4>`;
             otazky.forEach(o => {
                 const v = k.odpovedi[o.id];
-                const odp = v === 1 ? `<span class="odp odp-ano">Ano</span>` : v === -1 ? `<span class="odp odp-ne">Ne</span>` : `<span class="odp">Neodpověděl/a</span>`;
+                const nic = OTAZKY_DOBROVOLNE.includes(o.id) ? 'Nechce odpovídat' : 'Neodpověděl/a';
+                const odp = v === 1 ? `<span class="odp odp-ano">Ano</span>` : v === -1 ? `<span class="odp odp-ne">Ne</span>` : `<span class="odp">${nic}</span>`;
                 html += `<div class="profil-polozka"><div class="qa-q">${o.text}</div>${kontextHtml(o)}${odp}${kom[o.id] ? `<div class="qa-a">${kom[o.id]}</div>` : ''}</div>`;
             });
             html += `</div>`;
 
             // Pravý sloupec: priority od nejvyšší, uvnitř úrovně podle abecedy
             html += `<div><h4>Priority</h4>`;
+            if (k.vyjadreniOblasti) html += `<div class="qa-block"><div class="qa-q">Vyjádření k oblastem</div><div class="qa-a">${k.vyjadreniOblasti}</div></div>`;
             const serazeneOblasti = oblasti
                 .map(o => ({ ...o, u: (k.priority || {})[o.id] || 0 }))
                 .sort((a, b) => b.u - a.u || a.text.localeCompare(b.text, 'cs'));

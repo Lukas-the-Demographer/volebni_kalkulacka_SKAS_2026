@@ -125,7 +125,7 @@ const oblasti = [
     { id: 'o12', text: 'Rozpočet fakulty',              popis: 'Hospodaření fakulty, kontrola rozpočtu a financování Biocentra.' },
     { id: 'o13', text: 'Sport',                         popis: 'Tělesná výchova, sprchy a sportovní zázemí, děkanský sportovní den a další sportovní akce.' },
     { id: 'o14', text: 'Univerzitní politika',          popis: 'Vysokoškolská politika a témata z Akademického senátu UK.' },
-    { id: 'o15', text: 'Vnitřní předpisy',              popis: 'Tvorba a změny statutu, studijního, disciplinárního a volebního řádu.' }
+    { id: 'o15', text: 'Vnitřní předpisy',              popis: 'Tvorba a změny vnitřních předpisů fakulty: Statut PřF, Volební řád a Jednací řád Akademického senátu, Jednací řád Vědecké rady, Disciplinární řád pro studenty, Pravidla pro přiznávání stipendií, Pravidla pro konání státní rigorózní zkoušky a Řád habilitačního řízení a řízení ke jmenování profesorem. (Pravidla pro organizaci studia patří do oblasti Organizace studia.)' }
 ];
 
 // Rozbalovací popis oblasti („Co sem patří“)
@@ -144,7 +144,7 @@ function jakVolitHtml() {
         <ol>
             <li><strong>Kdy:</strong> 24.–26. 11. 2026, elektronicky.</li>
             <li><strong>Kde:</strong> <a href="${ODKAZ_HLASOVANI}" target="_blank">hlasovani.is.cuni.cz ↗</a> – přihlásíš se číslem osoby (na ISICu pod fotkou) a heslem do CAS, stejně jako do SIS.</li>
-            <li><strong>Koho:</strong> volíš kandidáty ze své sekce (okrsku).</li>
+            <li><strong>Koho:</strong> volíš kandidáty ze své sekce (okrsku). Do které patříš, určuje garant tvého studijního programu.</li>
             <li><strong>Kolik:</strong> nejvýše tolik, kolik je mandátů v tvé sekci. Nemusíš využít všechny hlasy – dej je těm, které v senátu opravdu chceš. Víc hlasů, než je povoleno, lístek zneplatní.</li>
             <li><strong>Kdo vyhraje:</strong> zvoleni jsou kandidáti s nejvíce hlasy. Kdo se nedostane, ale získá hlas aspoň od 20 % voličů, stává se náhradníkem.</li>
         </ol>
@@ -198,8 +198,12 @@ const neprijemneOtazky = [
     { id: 'n1', text: 'Budeš mít na práci v senátu dost času? Čeho se kvůli ní vzdáš?' },
     { id: 'n2', text: 'Plánuješ během mandátu výjezd do zahraničí? Pokud ano, jak zůstaneš v kontaktu se senátem a studenty?' },
     { id: 'n3', text: '„Plnit, co studenti chtějí“ je hezká fráze. Jak konkrétně budeš v kontaktu i s běžnými studenty, kteří nejsou ve spolcích ani v senátu?' },
-    { id: 'n4', text: 'Kde se vzalo tvé odhodlání kandidovat? Co tě přiměje dát do práce ve SKAS 110 %?' }
+    { id: 'n4', text: 'Kde se vzalo tvé odhodlání kandidovat? Co tě přiměje dát do práce ve SKAS 110 %?' },
+    { id: 'n5', text: 'Senátoři zvolení v těchto volbách budou na podzim 2028 volit děkana. Podle čeho se při té volbě budeš rozhodovat?' }
 ];
+
+// Otázky, u kterých se kandidátova nevyplněná odpověď nezapočítává (zobrazí se „Nechce odpovídat“, ne jako neshoda)
+const OTAZKY_DOBROVOLNE = ['q16', 'q17'];
 
 // Odpovědi na otázky jako pole v pořadí q1..q20 (1 = Ano, -1 = Ne) – až je kandidát pošle
 const odp = pole => Object.fromEntries(pole.map((v, i) => ['q' + (i + 1), v]));
@@ -339,7 +343,7 @@ const kandidati = [
             o2: 'Chce fakultní posilovnu a sál na aerobik v kampusu.'
         }),
     kandidat('prasivka', 'Jonáš Prašivka', 'Geografie', '1MYHhyxqM6weghem2BGuohwQ3y3TPHFel',
-        'Geografie a kartografie', '2. ročník Bc.', '', {
+        'Geografie a kartografie', '2. ročník Bc.', 'prasivkjo@natur.cuni.cz', {
             o1: 'Chce maximální podporu spolků včetně zakládání nových.',
             o8: 'Chce jednotná pravidla pro AI ve studiu a víc výuky práce s AI.',
             o6: 'Chce klást otázky k organizaci studia tam, kde se dá najít odpověď.'
@@ -389,7 +393,7 @@ const kandidati = [
             o2: 'Chce prostory ke studiu i po 18. hodině.',
             o8: 'Chce aktualizované sylaby a práci s výsledky hodnocení výuky.'
         }),
-    kandidat('kojzarova', 'Andrea Kojzarova', 'Geologie a ÚŽP', '14HgHVZZF_IiFmHj7w-ze7tyokskYlcxF',
+    kandidat('kojzarova', 'Andrea Kojzarová', 'Geologie a ÚŽP', '14HgHVZZF_IiFmHj7w-ze7tyokskYlcxF',
         'Geologie (paleontologie)', '1. ročník nMgr.', '', {
             o5: 'Chce být dostupnou zástupkyní geologů a informovat o rozhodnutích senátu.',
             o7: 'Pořádá přednášku pro prváky o zkouškovém a chce sdílení zkušeností mezi ročníky.'
