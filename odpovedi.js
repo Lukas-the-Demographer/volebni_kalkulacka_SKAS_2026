@@ -224,10 +224,9 @@ const ODPOVEDI_KANDIDATU = {
             n5: 'Podle volebních programů, reakcí na veřejných diskuzí a vlastního svědomí.' }
     },
     kojzarova: {
-        odpovedi: [-1, 1, 1, -1, 1, 1, null, -1, 1, -1, -1, -1, 1, -1, 1, -1, null, 1, 1, 1],
+        odpovedi: [-1, 1, 1, -1, 1, 1, null, -1, 1, -1, -1, -1, 1, -1, 1, null, null, 1, 1, 1],
         priority: ['o1 o4 o5 o6 o15', 'o3 o8 o10 o12 o14', 'o2 o7 o9 o11 o13'],
-        zduvodneni: { q1: 'My jako malá sekce máme malé spolky často s málo lidmi a byli bychom tím diskriminováni velé akce pro celou fakultu jsou skvělé ale jsou potřeba i ty malé',
-            q17: 'Tohle není odpověď na ano ne' },
+        zduvodneni: { q1: 'My jako malá sekce máme malé spolky často s málo lidmi a byli bychom tím diskriminováni velé akce pro celou fakultu jsou skvělé ale jsou potřeba i ty malé' },
         neprijemne: { n1: 'Myslím že ano, druhá část otázky se mi nelíbí je nevhodná',
             n2: 'Spíš ne ale kdyby ano rozhodně bych zůstala v pravidelném kontaktu s fakultou a lidmi na ní',
             n3: 'Doufám, že potkáváním se na chodbách , v terénu, případně na společných předmětech a samozřejmě v hospodě 😆',
@@ -369,7 +368,7 @@ const ODPOVEDI_KANDIDATU = {
             n5: 'Při této volbě se budu rozhodovat podle svého nejlepšího svědomí a vědomí. A samozřejmě po osobním setkání s jednotlivými kandidáty.' }
     },
     pipalova: {
-        odpovedi: [-1, -1, -1, -1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, 1, 1, 1, 1, -1],
+        odpovedi: [-1, -1, -1, -1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, null, 1, 1, 1, -1],
         priority: ['o2 o4 o6 o9 o10', 'o1 o7 o8 o12 o13', 'o3 o5 o11 o14 o15'],
         zduvodneni: { q1: 'Kvalita žádosti by neměla být jediným kritériem pro rozdělování podpory. Je důležité myslet i na menší a nově vznikající spolky, které zatím nemají zkušenosti s psaním žádostí, ale mohou významně přispívat k pestrému studentskému životu.',
             q2: 'Podpora spolků by se měla posuzovat individuálně podle jejich činnosti, potřeb a konkrétních projektů. Pevné hranice by mohly zbytečně omezit i aktivní spolky, které mají stále co nabídnout.',
