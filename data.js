@@ -235,6 +235,11 @@ const prio = (tri, dve, jedna) => {
 
 const drive = id => `https://drive.google.com/file/d/${id}/view`;
 
+// Další dokumenty, které kandidáti poslali (zobrazí se v profilu pod kandidaturou): id: [[název, odkaz], …]
+const DALSI_ODKAZY = {
+    pernicky: [['Životopis', drive('1AlUfQe-Cc0URM94XIz3KVVHS8seiJUvi')], ['Volební program', drive('1KnF3EJvzh1xHxG42rR3sgZ-YjpVaU9T_')]]
+};
+
 // Kandidát: údaje z životopisu + komentáře z programu.
 // Až kandidát pošle odpovědi, doplň: odpovedi: odp([...]), priority: prio('...', '...', '...'), neprijemne: { n1: '...', ... }
 function kandidat(id, jmeno, sekceNazev, driveId, obor, rocnik, kontakt, komentare, foto = `foto/${id}.jpg`) {
