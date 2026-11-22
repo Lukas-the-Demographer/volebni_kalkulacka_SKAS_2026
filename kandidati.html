@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profily kandidátů – volby do SKASu PřF UK</title>
-    <!-- ?v=23: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=24: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=23">
-    <script src="data.js?v=23"></script>
-    <script src="odpovedi.js?v=23"></script>
+    <link rel="stylesheet" href="style.css?v=24">
+    <script src="data.js?v=24"></script>
+    <script src="odpovedi.js?v=24"></script>
 </head>
 <body>
 
@@ -79,7 +79,7 @@
             if (k.info.kontakt) radky.push(`<strong>Kontakt:</strong> <a href="mailto:${k.info.kontakt}" style="color:var(--cyan);">${k.info.kontakt}</a>`);
             const dalsi = DALSI_ODKAZY[k.id];
             if (k.info.odkaz) radky.push(`<strong>${dalsi ? 'Kandidatura' : 'Program a životopis'}:</strong> <a href="${k.info.odkaz}" target="_blank" style="color:var(--yellow);">Otevřít PDF ↗</a>`);
-            (dalsi || []).forEach(([nazev, url]) => radky.push(`<strong>${nazev}:</strong> <a href="${url}" target="_blank" style="color:var(--yellow);">Otevřít PDF ↗</a>`));
+            (dalsi || []).forEach(([nazev, url]) => radky.push(`<strong>${nazev}:</strong> <a href="${url}" target="_blank" style="color:var(--yellow);">${/\.pdf$|drive\.google/.test(url) ? 'Otevřít PDF' : 'Otevřít stránku'} ↗</a>`));
 
             let html = `
                 <div class="kand-box expanded" id="card-${k.id}">

@@ -238,6 +238,8 @@ const drive = id => `https://drive.google.com/file/d/${id}/view`;
 
 // Další dokumenty, které kandidáti poslali (zobrazí se v profilu pod kandidaturou): id: [[název, odkaz], …]
 const DALSI_ODKAZY = {
+    // na přání kandidáta (22. 11.): jeho zkrácená verze, oficiální kandidatura zůstává
+    jilek: [['Program a životopis', 'programy/jilek.pdf'], ['Kandidáti na webu PřF', 'https://natur.cuni.cz/fakulta/organizacni-struktura/organy-fakulty/akademicky-senat/volby/volby-do-studentske-komory-asf-2026']],
     pernicky: [['Životopis', drive('1AlUfQe-Cc0URM94XIz3KVVHS8seiJUvi')], ['Volební program', drive('1KnF3EJvzh1xHxG42rR3sgZ-YjpVaU9T_')]]
 };
 
@@ -277,8 +279,7 @@ const kandidati = [
             o11: 'Chce na chodbách třídit i kov.',
             o9: 'Chce propagovat i nevědecká uplatnění přírodovědných titulů.'
         }),
-    // původně oficiální PDF '104mP4Ny_PcF_PVz7eQJRnduzeDN6aXQw'; na přání kandidáta (22. 11.) jeho zkrácená verze
-    kandidat('jilek', 'Vojtěch Jílek', 'Biologie', 'programy/jilek.pdf',
+    kandidat('jilek', 'Vojtěch Jílek', 'Biologie', '104mP4Ny_PcF_PVz7eQJRnduzeDN6aXQw',
         'Biologie se zaměřením na vzdělávání', '2. ročník Bc.', 'jilekvo@natur.cuni.cz', {
             o6: 'Chce včasné informace přes školní e-mail a snadno dohledatelné návody na webu (zápis, náležitosti prací).',
             o2: 'Chce hledat nové výukové prostory, zvelebit Chladič, knihovny a chodby a prodloužit otevírací dobu knihoven.',
