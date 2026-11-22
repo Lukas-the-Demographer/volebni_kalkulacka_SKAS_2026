@@ -220,6 +220,7 @@ const OTAZKY_DOBROVOLNE = ['q16', 'q17'];
 
 // Vyjádření kandidátů, kteří se do kalkulačky nezapojili (poslali e-mailem), doslovně: id: 'text'
 const VYJADRENI_NEUCASTI = {
+    kubu: '<p>Volební kalkulačku jsem se rozhodl nevyplnit a tedy v ní nebýt zahrnut, jelikož nám byla představena na poslední chvíli, bez předchozího oznámení či domluvě a pobízení k vyplnění hraničilo s nátlakem. Nátlak v akademické sféře principiálně odmítám a svých principů se držím, i když mě postaví do nevýhodné situace.</p>',
     belza: '<p>Mám zásadní problémy s tím jakým způsobem kalkulačka vznikla, jaké otázky nabízí, jakým způsobem byla představena kandidátům a na jakých principech stojí.</p><p>1. Otázky. Většina otázek v kalkulačce uvedených se týká témat, které rozhodně nelze posoudit jako Ano/Ne a ani komentáře to neřeší (jelikož výsledek kalkulačky je prostě dělán shodou odpovědí). Na spoustu otázek také nelze spolehlivě odpovědět bez předchozích znalostí (Ví studenti mimo SKAS co by obnášela správa prostor vedených pod fakultou? Pokud je, tak jak si na to mají udělat názor? (Já bych takovou věc například na bakaláři nevěděl ani trochu)</p><p>Otázka na volbu děkana je přímým narušením anonymity volby. Senátoři, kteří děkana před dvěma lety volili mají nyní svůj hlas nepřímo veřejně sdílet? To je hrozně špatně, je důvod proč je volba děkana anonymní (například aby nemohlo dojít k "zasednutí" vyučujícího ke studentům)</p><p>2. Vznik a představením kandidátům. Existence kalkulačky byla nejprve oznámena současnému SKASu, a to po uzavření kandidatur. Značná část senátorů se proti kalkulačce vymezila a silně nedoporučila její vznik a publikaci. Přesto tato doporučení byla ignorována a kalkulačka nejen byla dokončena, ale také se začala prezentovat jako "objektivní neutrální nástroj" a nabrala narativ "kdo ji nevyplní, tomu nezáleží na studentech" což je extrémně nepravdivé.</p><p>Kandidátům poté byla představena jen několik málo dní před deadlinem otázek, čímž absolutně zabránila nějaké diskuzi nad tím zda kandidáti takový nástroj chtějí nebo ne.</p><p>3. Proč ji kandidáti vyplňují a jak jim byla představena?</p><p>Kandidáti dostali o kalkulačce zprávu, která hraničila s vydíráním a byl v ni použít silný nátlak. Zpráva byla navíc sepsána ve stylu "kdo ji nevyplní, je proti studentům a měl by se stydět".</p><p>Většina kandidátů že sekce biologie (z jiných sekcí nemohu potvrdit) ji vyplnila nakonec jen ze strachu (Tohle je ten mainstream, kterým se teda představí kandidáti a když ji nevyplním tak to bude vypadat, že mi na studentech nezáleží a hlavně se o mně prostě studenti nedozví). Panuje tedy strach o ztrátu voličů "když nevyplním kalkulačku" což samozřejmě není správně.</p><p>Dovolím si i poznámku, že více než polovina kandidátů za biologii s kalkulačku principiálně nesouhlasí a to už o něčem vypovídá...</p><p>To, že někdo kalkulačku nevyplní, může být způsobeno prostě tím, že s ní nesouhlasí (z výše uvedených důvodů). Neznamená to, že mu/jí nezáleží na studentech, nemá názor nebo nechce diskutovat o těchto tématech.</p><p>Moc rád se o kterémkoliv tématu uvedeném v kalkulačce pobavím. Klidně mi napište, budu rád. Nesouhlasím ale s touto kalkulačkou a fakt se nenechám emočně vydírat nebo neosobně hanit jen abych ji vyplnil. Jsme sakra studenti, tak bychom si takové věci mohli odpustit.</p><p>S bagetou Golf v ruce<br>Vašek</p>'
 };
 
@@ -245,7 +246,7 @@ const DALSI_ODKAZY = {
 function kandidat(id, jmeno, sekceNazev, driveId, obor, rocnik, kontakt, komentare, foto = `foto/${id}.jpg`) {
     return {
         id, jmeno, foto,
-        info: { sekce: sekceNazev, obor, rocnik, kontakt, odkaz: drive(driveId) },
+        info: { sekce: sekceNazev, obor, rocnik, kontakt, odkaz: driveId.includes('/') ? driveId : drive(driveId) },  // cesta s „/“ = soubor nahraný přímo na web (např. programy/jilek.pdf)
         // Shrnutí programů (parametr komentare) se v profilu nezobrazují – v profilu mají být jen texty samotných kandidátů.
         // Zdůvodnění odpovědí doplní odpovedi.js.
         odpovedi: {}, priority: {}, komentare: {}, neprijemne: {}
@@ -276,7 +277,8 @@ const kandidati = [
             o11: 'Chce na chodbách třídit i kov.',
             o9: 'Chce propagovat i nevědecká uplatnění přírodovědných titulů.'
         }),
-    kandidat('jilek', 'Vojtěch Jílek', 'Biologie', '104mP4Ny_PcF_PVz7eQJRnduzeDN6aXQw',
+    // původně oficiální PDF '104mP4Ny_PcF_PVz7eQJRnduzeDN6aXQw'; na přání kandidáta (22. 11.) jeho zkrácená verze
+    kandidat('jilek', 'Vojtěch Jílek', 'Biologie', 'programy/jilek.pdf',
         'Biologie se zaměřením na vzdělávání', '2. ročník Bc.', 'jilekvo@natur.cuni.cz', {
             o6: 'Chce včasné informace přes školní e-mail a snadno dohledatelné návody na webu (zápis, náležitosti prací).',
             o2: 'Chce hledat nové výukové prostory, zvelebit Chladič, knihovny a chodby a prodloužit otevírací dobu knihoven.',
