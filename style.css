@@ -180,6 +180,19 @@ button:hover, a.btn:hover { background: #444; color: white; border-color: var(--
 .kontext-proti { color: var(--magenta) !important; }
 .kontext a { color: var(--yellow); }
 .profil-polozka .kontext { font-size: 12px; }
+/* Kontext rovnou viditelný v kalkulačce – tlumený, aby nepřebil otázku a tlačítka */
+.kontext-vzdy { margin: 2px 0 12px; font-size: 12.5px; line-height: 1.45; color: #9a9a9a; }
+.kontext-vzdy p { margin: 0; }
+.kontext-vzdy .kv-info { margin-bottom: 8px; }
+.kontext-vzdy a { color: var(--yellow); }
+.kv-sloupce { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.kv-sloupce p { padding-left: 10px; border-left: 2px solid #444; }
+.kv-sloupce span { display: block; font-size: 10.5px; font-weight: bold; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; }
+.kv-pro { border-left-color: rgba(0, 210, 255, 0.5) !important; }
+.kv-pro span { color: var(--cyan); }
+.kv-proti { border-left-color: rgba(255, 0, 127, 0.5) !important; }
+.kv-proti span { color: var(--magenta); }
+@media (max-width: 600px) { .kv-sloupce { grid-template-columns: 1fr; gap: 8px; } }
 /* Návod, jak volit */
 .jak-volit { margin: 30px 0 10px; padding: 18px 22px; background: var(--panel); border: 2px solid var(--yellow); scroll-margin-top: 20px; text-align: left; }
 .jak-volit h2 { margin-top: 0; color: var(--yellow); border-bottom: 1px solid #444; text-align: left; }

@@ -20,7 +20,7 @@ const ODPOVEDI_KANDIDATU = {
             q14: 'Nemám názor. Spíš bych byl pro, aby se studenti dostali do budov Fakulty na ISIC i přes noc.',
             q15: 'Pokud se peníze seženou jinde, tak skvěle. Pokud né , tak jsem pro to tady udělat hezké. Především pokud na to Fakulta vynaloží 0.0075% ročního rozpočtu.',
             q16: 'Nemohu se vyjádřit. (tehdy jsem byl senátorem a volba je tajná)',
-            q17: 'Nemohu se vyjádřit. (tehdy jsem byl senátorem a volba je tajná)',
+            q17: 'Těžko shrnout ve dvou větách. Něco se povedlo, něco ne - revize předpisů na základě nového zákona o vysokých školách se daří, Biocentrum je jiný příběh. Navíc kolegium není jeden člověk.',
             q18: 'Záleží co po děkanátu požadujeme. Větší centralizace služeb (např. pro žadatele o větší granty) by znamenala větší podíl.',
             q20: 'Máme systém, který funguje. A není pravda, že počet mandátů na sekci je pevný - počet mandátů je daný počtem volitelů (nyní studentů).' },
         neprijemne: { n1: 'Senátními tématy se zabývám nyní a mám to v plánu i v budoucnu.',
@@ -524,8 +524,6 @@ const ODPOVEDI_KANDIDATU = {
     },
 };
 
-// Vyjádření kandidátů, kteří se do kalkulačky nezapojili (poslali e-mailem): id: 'text'
-const VYJADRENI_NEUCASTI = {};
 
 // Doplnění odpovědí do kandidátů z data.js
 kandidati.forEach(k => {

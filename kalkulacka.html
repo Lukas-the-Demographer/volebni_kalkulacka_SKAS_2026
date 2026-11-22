@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volební kalkulačka – volby do SKASu PřF UK</title>
-    <!-- ?v=13: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
+    <!-- ?v=15: po každé úpravě style.css, data.js nebo odpovedi.js zvyš číslo (ve všech HTML), jinak prohlížeč může použít starou verzi -->
     <link rel="icon" href="ikona.svg" type="image/svg+xml">
     <link rel="icon" href="ikona.png" type="image/png">
     <link rel="apple-touch-icon" href="ikona.png">
-    <link rel="stylesheet" href="style.css?v=13">
-    <script src="data.js?v=13"></script>
-    <script src="odpovedi.js?v=13"></script>
+    <link rel="stylesheet" href="style.css?v=15">
+    <script src="data.js?v=15"></script>
+    <script src="odpovedi.js?v=15"></script>
 </head>
 <body>
 
@@ -79,7 +79,7 @@
                         <strong>Nezávislá studentská iniciativa, nikoli oficiální nástroj SKAS ani ASF.</strong> <a href="o-kalkulacce.html" target="_blank" style="color:var(--cyan);">Jak kalkulačka vznikla ↗</a>
                      </div>
                      <div class="instruction-box">
-                        <strong>Návod:</strong> Vyber Ano/Ne. Pod každou otázkou je rozbalovací <strong>Kontext</strong> – co zastánci a odpůrci vidí jako přínos a riziko. Pokud vybereš "Nevím", otázka se do tvého výsledku <strong>vůbec nezapočítá</strong> a nijak tě nepoškodí. Když kandidát na otázku neodpověděl, počítá se to jako neshoda – kromě otázek 16 a 17 o děkanovi, které se mu v takovém případě nezapočítají vůbec.
+                        <strong>Návod:</strong> Vyber Ano/Ne. Pod každou otázkou je stručně, co zastánci a odpůrci vidí jako přínos a riziko. Pokud vybereš "Nevím", otázka se do tvého výsledku <strong>vůbec nezapočítá</strong> a nijak tě nepoškodí. Když kandidát na otázku neodpověděl, počítá se to jako neshoda – kromě otázek 16 a 17 o děkanovi, které se mu v takovém případě nezapočítají vůbec.
                      </div>`;
 
             otazky.forEach((o, i) => {
@@ -88,7 +88,7 @@
                     <div class="card">
                         <div class="otazka-cislo">Otázka ${i + 1} / ${otazky.length}</div>
                         <p class="otazka-text">${o.text}</p>
-                        ${kontextHtml(o, otevreneKontexty.has(o.id), `prepniKontext('${o.id}', this.open)`)}
+                        ${kontextViditelnyHtml(o)}
                         <div class="options">
                             <button class="btn-ano ${z === 1 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', 1)">Ano</button>
                             <button class="btn-ne ${z === -1 ? 'selected' : ''}" onclick="odpovezOtazku('${o.id}', -1)">Ne</button>

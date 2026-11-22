@@ -164,6 +164,19 @@ function kontextHtml(o, otevreno = false, onToggle = '') {
     return `<details class="kontext" ${otevreno ? 'open' : ''} ${onToggle ? `ontoggle="${onToggle}"` : ''}><summary>Kontext</summary>${obsah}</details>`;
 }
 
+// Kontext rovnou viditelný (v kalkulačce): nenápadný, zastánci a odpůrci vedle sebe
+function kontextViditelnyHtml(o) {
+    let html = `<div class="kontext-vzdy">`;
+    if (o.info) html += `<p class="kv-info">${o.info}${o.odkaz ? ` <a href="${o.odkaz}" target="_blank">Zdroj ↗</a>` : ''}</p>`;
+    if (o.pro || o.proti) {
+        html += `<div class="kv-sloupce">`;
+        if (o.pro) html += `<p class="kv-pro"><span>Zastánci</span>${o.pro}</p>`;
+        if (o.proti) html += `<p class="kv-proti"><span>Odpůrci</span>${o.proti}</p>`;
+        html += `</div>`;
+    }
+    return html + `</div>`;
+}
+
 // Komentáře z programů kandidátů byly přiřazené ke starším oblastem.
 // Tahle tabulka je převede na nové oblasti (starý klíč → nový klíč); u sloučených se texty spojí.
 const PREVOD_STARYCH_OBLASTI = { o1: 'o1', o2: 'o2', o3: 'o3', o4: 'o3', o5: 'o4', o6: 'o7', o7: 'o5', o8: 'o6', o9: 'o10', o10: 'o10', o11: 'o11', o12: 'o9', o13: 'o5', o14: 'o10', o15: 'o8' };
@@ -204,6 +217,11 @@ const neprijemneOtazky = [
 
 // Otázky, u kterých se kandidátova nevyplněná odpověď nezapočítává (zobrazí se „Nechce odpovídat“, ne jako neshoda)
 const OTAZKY_DOBROVOLNE = ['q16', 'q17'];
+
+// Vyjádření kandidátů, kteří se do kalkulačky nezapojili (poslali e-mailem), doslovně: id: 'text'
+const VYJADRENI_NEUCASTI = {
+    belza: '<p>Mám zásadní problémy s tím jakým způsobem kalkulačka vznikla, jaké otázky nabízí, jakým způsobem byla představena kandidátům a na jakých principech stojí.</p><p>1. Otázky. Většina otázek v kalkulačce uvedených se týká témat, které rozhodně nelze posoudit jako Ano/Ne a ani komentáře to neřeší (jelikož výsledek kalkulačky je prostě dělán shodou odpovědí). Na spoustu otázek také nelze spolehlivě odpovědět bez předchozích znalostí (Ví studenti mimo SKAS co by obnášela správa prostor vedených pod fakultou? Pokud je, tak jak si na to mají udělat názor? (Já bych takovou věc například na bakaláři nevěděl ani trochu)</p><p>Otázka na volbu děkana je přímým narušením anonymity volby. Senátoři, kteří děkana před dvěma lety volili mají nyní svůj hlas nepřímo veřejně sdílet? To je hrozně špatně, je důvod proč je volba děkana anonymní (například aby nemohlo dojít k "zasednutí" vyučujícího ke studentům)</p><p>2. Vznik a představením kandidátům. Existence kalkulačky byla nejprve oznámena současnému SKASu, a to po uzavření kandidatur. Značná část senátorů se proti kalkulačce vymezila a silně nedoporučila její vznik a publikaci. Přesto tato doporučení byla ignorována a kalkulačka nejen byla dokončena, ale také se začala prezentovat jako "objektivní neutrální nástroj" a nabrala narativ "kdo ji nevyplní, tomu nezáleží na studentech" což je extrémně nepravdivé.</p><p>Kandidátům poté byla představena jen několik málo dní před deadlinem otázek, čímž absolutně zabránila nějaké diskuzi nad tím zda kandidáti takový nástroj chtějí nebo ne.</p><p>3. Proč ji kandidáti vyplňují a jak jim byla představena?</p><p>Kandidáti dostali o kalkulačce zprávu, která hraničila s vydíráním a byl v ni použít silný nátlak. Zpráva byla navíc sepsána ve stylu "kdo ji nevyplní, je proti studentům a měl by se stydět".</p><p>Většina kandidátů že sekce biologie (z jiných sekcí nemohu potvrdit) ji vyplnila nakonec jen ze strachu (Tohle je ten mainstream, kterým se teda představí kandidáti a když ji nevyplním tak to bude vypadat, že mi na studentech nezáleží a hlavně se o mně prostě studenti nedozví). Panuje tedy strach o ztrátu voličů "když nevyplním kalkulačku" což samozřejmě není správně.</p><p>Dovolím si i poznámku, že více než polovina kandidátů za biologii s kalkulačku principiálně nesouhlasí a to už o něčem vypovídá...</p><p>To, že někdo kalkulačku nevyplní, může být způsobeno prostě tím, že s ní nesouhlasí (z výše uvedených důvodů). Neznamená to, že mu/jí nezáleží na studentech, nemá názor nebo nechce diskutovat o těchto tématech.</p><p>Moc rád se o kterémkoliv tématu uvedeném v kalkulačce pobavím. Klidně mi napište, budu rád. Nesouhlasím ale s touto kalkulačkou a fakt se nenechám emočně vydírat nebo neosobně hanit jen abych ji vyplnil. Jsme sakra studenti, tak bychom si takové věci mohli odpustit.</p><p>S bagetou Golf v ruce<br>Vašek</p>'
+};
 
 // Odpovědi na otázky jako pole v pořadí q1..q20 (1 = Ano, -1 = Ne) – až je kandidát pošle
 const odp = pole => Object.fromEntries(pole.map((v, i) => ['q' + (i + 1), v]));
@@ -326,7 +344,7 @@ const kandidati = [
             o5: 'Chce být spojkou mezi senátem, vedením a studenty a zlepšit komunikaci mezi fakultami.'
         }),
     kandidat('gregor', 'Baldo Gregor', 'Geografie', '1u0-Z2D9A8vuDjmfoCHskxE3bhEGlrzt4',
-        'Fyzická geografie a geoekologie', '1. ročník', '', {
+        'Fyzická geografie a geoekologie', '1. ročník nMgr.', '', {
             o5: 'Klade důraz na férovou debatu a transparentní jednání.'
         }),
     kandidat('jandik', 'Jan Jandík', 'Geografie', '1ahj1gX9lnmpNMSFtsxGaA-tAC4rmNMSm',
